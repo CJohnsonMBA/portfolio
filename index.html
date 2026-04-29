@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cory Johanson — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --navy:#1A3A5C;--navy-mid:#2a4f7a;--gold:#C9A84C;--gold-light:#e0c070;--cream:#F7F4EF;--cream-dark:#EDE9E0;--ink:#1c1c1c;--muted:#6b6560;--border:#ddd8cf;--surface:#FDFBF8; }
+  *{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6;}
+  .hero{background:var(--navy);min-height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;top:-120px;right:-120px;width:500px;height:500px;border:80px solid rgba(201,168,76,0.07);border-radius:50%;pointer-events:none;}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:28px 64px;position:relative;z-index:10;border-bottom:1px solid rgba(255,255,255,0.08);}
+  .nav-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;color:#fff;}
+  .nav-links{display:flex;gap:32px;}
+  .nav-links a{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;}
+  .nav-links a:hover{color:var(--gold);}
+  .hero-content{flex:1;display:flex;flex-direction:column;justify-content:center;padding:80px 64px 100px;position:relative;z-index:10;max-width:900px;}
+  .hero-eyebrow{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px;}
+  .hero h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:64px;color:#fff;font-weight:900;line-height:1.05;margin-bottom:20px;}
+  .hero h1 span{color:var(--gold);}
+  .hero-tagline{font-size:19px;color:rgba(255,255,255,0.6);line-height:1.65;max-width:600px;margin-bottom:48px;}
+  .hero-stats{display:flex;gap:48px;margin-bottom:56px;}
+  .stat-num{font-family:'Plus Jakarta Sans',sans-serif;font-size:40px;font-weight:900;color:var(--gold);line-height:1;}
+  .stat-label{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:.1em;margin-top:4px;}
+  .hero-cta{display:flex;gap:16px;flex-wrap:wrap;}
+  .btn-primary{background:var(--gold);color:var(--navy);font-family:'DM Mono',monospace;font-size:12px;font-weight:500;padding:14px 28px;border-radius:8px;text-decoration:none;letter-spacing:.06em;transition:all .2s;}
+  .btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,0.3);}
+  .btn-secondary{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);font-family:'DM Mono',monospace;font-size:12px;padding:14px 28px;border-radius:8px;text-decoration:none;letter-spacing:.06em;border:1px solid rgba(255,255,255,0.15);transition:all .2s;}
+  .btn-secondary:hover{background:rgba(255,255,255,0.14);}
+  .about{background:var(--surface);padding:80px 64px;border-bottom:1px solid var(--border);}
+  .about-inner{max-width:960px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;}
+  .about-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;}
+  .about h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;color:var(--navy);font-weight:700;line-height:1.2;margin-bottom:20px;}
+  .about p{font-size:15px;color:#3a3530;line-height:1.8;margin-bottom:14px;}
+  .expertise-list{display:flex;flex-direction:column;gap:10px;}
+  .expertise-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--cream);border-radius:8px;border:1px solid var(--border);}
+  .expertise-icon{font-size:20px;flex-shrink:0;margin-top:1px;}
+  .expertise-title{font-weight:600;font-size:14px;color:var(--navy);margin-bottom:2px;}
+  .expertise-desc{font-size:13px;color:var(--muted);line-height:1.5;}
+  .portfolio{padding:80px 64px;max-width:1100px;margin:0 auto;}
+  .section-eyebrow{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px;}
+  .section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:36px;color:var(--navy);font-weight:700;margin-bottom:8px;}
+  .section-sub{font-size:16px;color:var(--muted);margin-bottom:48px;max-width:560px;}
+  .portfolio-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .portfolio-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .25s;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;}
+  .portfolio-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(26,58,92,0.12);border-color:var(--navy);}
+  .portfolio-card.featured{grid-column:span 2;}
+  .portfolio-card.featured .card-inner{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+  .card-accent{height:6px;}
+  .card-accent.navy{background:var(--navy);}
+  .card-accent.gold{background:var(--gold);}
+  .card-accent.teal{background:#2a7a6a;}
+  .card-accent.steel{background:#4a6a8a;}
+  .card-inner{padding:28px 28px 24px;flex:1;display:flex;flex-direction:column;}
+  .card-category{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px;}
+  .card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;color:var(--navy);font-weight:700;line-height:1.2;margin-bottom:10px;}
+  .card-desc{font-size:14px;color:#3a3530;line-height:1.7;margin-bottom:20px;flex:1;}
+  .card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
+  .tag{font-family:'DM Mono',monospace;font-size:10px;background:var(--cream-dark);border:1px solid var(--border);border-radius:20px;padding:3px 10px;color:var(--muted);}
+  .card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid var(--border);}
+  .card-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
+  .card-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--navy);display:flex;align-items:center;gap:6px;}
+  .card-link::after{content:'→';transition:transform .2s;}
+  .portfolio-card:hover .card-link::after{transform:translateX(4px);}
+  .card-right{display:flex;flex-direction:column;justify-content:space-between;}
+  .contact{background:var(--navy);padding:80px 64px;}
+  .contact-inner{max-width:700px;margin:0 auto;text-align:center;}
+  .contact-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;}
+  .contact h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:38px;color:#fff;font-weight:900;margin-bottom:16px;}
+  .contact p{font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:40px;line-height:1.7;}
+  .contact-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .contact-link{font-family:'DM Mono',monospace;font-size:12px;color:rgba(255,255,255,0.8);text-decoration:none;border:1px solid rgba(255,255,255,0.2);padding:12px 24px;border-radius:8px;transition:all .2s;letter-spacing:.06em;}
+  .contact-link:hover{border-color:var(--gold);color:var(--gold);}
+  .contact-link.primary{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:600;}
+  footer{background:#111e2b;padding:24px 64px;display:flex;align-items:center;justify-content:space-between;}
+  .footer-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;color:rgba(255,255,255,0.4);}
+  .footer-note{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.2);letter-spacing:.1em;}
+  @media(max-width:768px){nav{padding:20px 24px;}.hero-content{padding:60px 24px 80px;}.hero h1{font-size:40px;}.hero-stats{gap:28px;}.about{padding:60px 24px;}.about-inner{grid-template-columns:1fr;gap:40px;}.portfolio{padding:60px 24px;}.portfolio-grid{grid-template-columns:1fr;}.portfolio-card.featured{grid-column:span 1;}.portfolio-card.featured .card-inner{grid-template-columns:1fr;}.contact{padding:60px 24px;}footer{padding:20px 24px;flex-direction:column;gap:8px;text-align:center;}}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <nav>
+    <div class="nav-name">C. Johnson, MBA</div>
+    <div class="nav-links">
+      <a href="#portfolio">Portfolio</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Business Development · Partner GTM · Managed Security</div>
+    <h1>Partner ecosystems<br>built to <span>scale.</span></h1>
+    <p class="hero-tagline">Deep experience designing, launching, and optimizing global partner programs — MSSPs, GSIs, VARs, and ISVs — with measurable outcomes in pipeline, adoption, and ecosystem health.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">300+</div><div class="stat-label">Partners Managed</div></div>
+      <div class="stat"><div class="stat-num">400%+</div><div class="stat-label">Quota Attainment</div></div>
+      <div class="stat"><div class="stat-num">25%</div><div class="stat-label">Attrition Reduction</div></div>
+      <div class="stat"><div class="stat-num">$500K+</div><div class="stat-label">MDF Managed Annually</div></div>
+    </div>
+    <div class="hero-cta">
+      <a href="#portfolio" class="btn-primary">View Portfolio →</a>
+      <a href="mailto:OneCrisJ@icloud.com" class="btn-secondary">Get in Touch</a>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="about-inner">
+    <div>
+      <div class="about-label">Background</div>
+      <h2>GTM strategist. Ecosystem architect. Operator.</h2>
+      <p>Deep experience at the intersection of enterprise technology and partner-led growth — managing complex ecosystems at IBM, building GCP partner program operations at Google, and running $240M quarterly budget governance. Sold and positioned observability and security-adjacent products (Instana APM, IBM Log Analysis) that compete directly with Splunk.</p>
+      <p>My work sits at the intersection of strategy and execution: designing partner programs that scale, building the health analytics frameworks that keep them healthy, and executing the co-marketing programs that drive pipeline.</p>
+    </div>
+    <div>
+      <div class="about-label">Core Expertise</div>
+      <div class="expertise-list">
+        <div class="expertise-item"><div class="expertise-icon">🔐</div><div><div class="expertise-title">MSP/MSSP Security GTM</div><div class="expertise-desc">Service creation frameworks, offer design, MSSP lifecycle management, churn prevention</div></div></div>
+        <div class="expertise-item"><div class="expertise-icon">📊</div><div><div class="expertise-title">Partner Health Analytics</div><div class="expertise-desc">SFDC-based health scoring, pipeline velocity, renewal forecasting, GTM interventions</div></div></div>
+        <div class="expertise-item"><div class="expertise-icon">🤝</div><div><div class="expertise-title">Joint Business Planning</div><div class="expertise-desc">JBP design, QBR facilitation, executive alignment, co-marketing governance</div></div></div>
+        <div class="expertise-item"><div class="expertise-icon">📣</div><div><div class="expertise-title">Demand Generation & MDF</div><div class="expertise-desc">Co-marketing campaign execution, MDF budget management ($500K+), campaign-in-a-box design</div></div></div>
+        <div class="expertise-item"><div class="expertise-icon">🧠</div><div><div class="expertise-title">AI & Security Portfolio</div><div class="expertise-desc">watsonx.ai, Instana APM, IBM Log Analysis (Splunk competitor), OpenPages GRC</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="portfolio">
+  <div class="portfolio">
+    <div class="section-eyebrow">Work Samples</div>
+    <div class="section-title">Portfolio</div>
+    <div class="section-sub">Strategic frameworks, GTM plans, and analytics models developed across IBM, Google, and Denave partner programs.</div>
+
+    <div class="portfolio-grid">
+
+      <a href="gtm_plan.html" class="portfolio-card featured" target="_blank">
+        <div class="card-accent navy"></div>
+        <div class="card-inner">
+          <div>
+            <div class="card-category">GTM Strategy · Featured Work</div>
+            <div class="card-title">MSP Security GTM Plan</div>
+            <div class="card-desc">Comprehensive go-to-market strategy for enabling MSPs and MSSPs to integrate enterprise security into their service portfolios. Three-pillar framework: service creation enablement, demand generation, and partner health optimization. Includes partner segmentation model, 12-month execution roadmap, and success metrics tied to pipeline, adoption, and attrition.</div>
+            <div class="card-tags"><span class="tag">MSP/MSSP</span><span class="tag">GTM Strategy</span><span class="tag">Service Creation</span><span class="tag">Co-Marketing</span><span class="tag">JBP</span><span class="tag">MDF</span></div>
+          </div>
+          <div class="card-right">
+            <div style="background:rgba(26,58,92,0.06);border-radius:10px;padding:18px;font-size:13px;color:var(--muted);line-height:1.7"><strong style="color:var(--navy);display:block;margin-bottom:8px">What this demonstrates:</strong>Strategic thinking at the program level — designed specifically for the challenge of enabling MSPs to build profitable managed security practices, not just resell point products.</div>
+            <div class="card-footer"><div class="card-meta">6 sections · Full strategy document</div><div class="card-link">Open document</div></div>
+          </div>
+        </div>
+      </a>
+
+      <a href="health_scoring.html" class="portfolio-card" target="_blank">
+        <div class="card-accent teal"></div>
+        <div class="card-inner">
+          <div class="card-category">Partner Operations · Analytics</div>
+          <div class="card-title">Partner Health Scoring Framework</div>
+          <div class="card-desc">Composite scoring model for identifying MSSP and partner churn risk before it impacts revenue. Six weighted dimensions, four response tiers, and a structured intervention playbook. Applied across 300+ partner relationships — reduced attrition 25%, increased activation 40%.</div>
+          <div class="card-tags"><span class="tag">Partner Health</span><span class="tag">Churn Prevention</span><span class="tag">SFDC</span><span class="tag">MSSP</span><span class="tag">Analytics</span></div>
+          <div class="card-footer"><div class="card-meta">6-dimension model · Intervention playbook</div><div class="card-link">Open document</div></div>
+        </div>
+      </a>
+
+      <a href="sfdc_analytics.html" class="portfolio-card" target="_blank">
+        <div class="card-accent steel"></div>
+        <div class="card-inner">
+          <div class="card-category">Salesforce · Partner Analytics</div>
+          <div class="card-title">SFDC Partner Analytics</div>
+          <div class="card-desc">How Salesforce pipeline data was used to identify MSSP churn risk, deploy targeted GTM interventions, and optimize ecosystem performance. Includes dashboard design, renewal forecasting model, and a real case example catching three at-risk MSSP partners before pipeline impact.</div>
+          <div class="card-tags"><span class="tag">Salesforce</span><span class="tag">Pipeline Analytics</span><span class="tag">MSSP Churn</span><span class="tag">Renewal Forecasting</span></div>
+          <div class="card-footer"><div class="card-meta">5 sections · Case example included</div><div class="card-link">Open document</div></div>
+        </div>
+      </a>
+
+      <a href="intellibank_briefing.html" class="portfolio-card" target="_blank">
+        <div class="card-accent gold"></div>
+        <div class="card-inner">
+          <div class="card-category">Market Intelligence · Program Leadership</div>
+          <div class="card-title">Intellibank 2026 Outreach Intelligence Briefing</div>
+          <div class="card-desc">Market intelligence briefing authored for Denave partner program leadership and executive team. Covers 2026 outreach benchmarks, SI Score operationalization, and a 6-step signal-to-conversation sequence for partner sellers. Identified and formally escalated LinkedIn script generation as a priority product gap.</div>
+          <div class="card-tags"><span class="tag">Market Intelligence</span><span class="tag">Partner Enablement</span><span class="tag">GTM Frameworks</span><span class="tag">Signal Selling</span></div>
+          <div class="card-footer"><div class="card-meta">Original authored work · 2026</div><div class="card-link">Open document</div></div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <div class="contact-label">Let's Connect</div>
+    <h2>Open to the right opportunity.</h2>
+    <p>Targeting Senior Business Development and Partner GTM roles in enterprise security, AI, and cloud ecosystems. Based in Dallas, TX — available remote US or worldwide.</p>
+    <div class="contact-links">
+      <a href="mailto:OneCrisJ@icloud.com" class="contact-link primary">Send Email</a>
+      <a href="https://linkedin.com/in/cjanalytics/" class="contact-link" target="_blank">LinkedIn →</a>
+      <a href="tel:3134279788" class="contact-link">(313) 427-9788</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-name">C. Johnson, MBA</div>
+  <div class="footer-note">Dallas, TX · Remote US / Worldwide</div>
+</footer>
+
+</body>
+</html>

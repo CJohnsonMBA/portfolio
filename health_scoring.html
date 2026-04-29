@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partner Segmentation & Health Scoring Framework — C. Johnson, MBA</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  @media print { body{background:white;font-size:10pt;} .no-print{display:none;} .page-break{page-break-before:always;} .card{box-shadow:none!important;} }
+  :root {
+    --navy:#1A3A5C; --navy-mid:#2a4f7a; --navy-light:#3a6494;
+    --gold:#C9A84C; --gold-bg:rgba(201,168,76,0.08);
+    --cream:#F7F4EF; --cream-dark:#EDE9E0;
+    --ink:#1c1c1c; --muted:#6b6560; --border:#ddd8cf; --surface:#FDFBF8;
+    --green:#1e6640; --green-bg:#f0f7f4; --green-border:#a8d5be;
+    --amber:#7a5a00; --amber-bg:#fdf6e3; --amber-border:#e0c070;
+    --red:#8b2020; --red-bg:#fdf0f0; --red-border:#d4a0a0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--ink);line-height:1.65;font-size:15px;}
+
+  /* COVER */
+  .cover{background:var(--navy);padding:52px 64px 44px;border-bottom:4px solid var(--gold);position:relative;overflow:hidden;}
+  .cover::after{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;border:70px solid rgba(201,168,76,0.06);border-radius:50%;pointer-events:none;}
+  .cover-eye{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:14px;}
+  .cover h1{font-size:34px;color:#fff;font-weight:700;line-height:1.15;margin-bottom:8px;}
+  .cover-sub{font-size:15px;color:rgba(255,255,255,0.55);font-style:italic;margin-bottom:36px;}
+  .cover-outcomes{display:flex;gap:0;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.12);margin-bottom:32px;}
+  .outcome{flex:1;padding:18px 20px;border-right:1px solid rgba(255,255,255,0.1);}
+  .outcome:last-child{border-right:none;}
+  .outcome-num{font-size:32px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:4px;}
+  .outcome-label{font-family:'DM Mono',monospace;font-size:9.5px;color:rgba(255,255,255,0.45);letter-spacing:.1em;text-transform:uppercase;line-height:1.4;}
+  .cover-meta{display:flex;gap:24px;flex-wrap:wrap;}
+  .meta-item{font-family:'DM Mono',monospace;font-size:10.5px;color:rgba(255,255,255,0.4);}
+  .meta-item strong{color:var(--gold);display:block;font-size:11px;margin-bottom:2px;}
+
+  /* LAYOUT */
+  .container{max-width:940px;margin:0 auto;padding:48px 32px 80px;}
+
+  /* PHILOSOPHY CALLOUT */
+  .philosophy{background:var(--navy);border-radius:12px;padding:28px 32px;margin-bottom:44px;position:relative;overflow:hidden;}
+  .philosophy::before{content:'"';position:absolute;top:-10px;left:16px;font-size:120px;color:rgba(201,168,76,0.1);font-weight:700;line-height:1;}
+  .philosophy-label{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--gold);letter-spacing:.18em;text-transform:uppercase;margin-bottom:12px;}
+  .philosophy p{font-size:17px;color:#fff;font-weight:600;line-height:1.55;margin-bottom:10px;position:relative;}
+  .philosophy-sub{font-size:13.5px;color:rgba(255,255,255,0.55);line-height:1.7;position:relative;}
+
+  /* SECTION HEADERS */
+  .section{margin-bottom:48px;}
+  .section-header{display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:12px;border-bottom:2px solid var(--navy);}
+  .section-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.1em;background:var(--gold-bg);border:1px solid rgba(201,168,76,0.25);padding:5px 10px;border-radius:4px;}
+  .section-title{font-size:19px;color:var(--navy);font-weight:700;}
+
+  /* SEGMENTATION */
+  .seg-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:24px;}
+  .seg-step{padding:18px 16px;border-right:1px solid var(--border);background:var(--surface);}
+  .seg-step:last-child{border-right:none;}
+  .seg-step-num{font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px;}
+  .seg-step-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px;}
+  .seg-step p{font-size:12px;color:var(--muted);line-height:1.55;}
+
+  /* PARTNER TYPE CARDS */
+  .partner-types{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px;}
+  .pt-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;}
+  .pt-badge{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:#fff;background:var(--navy);padding:3px 10px;border-radius:4px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+  .pt-badge.mssp{background:#1e6640;}
+  .pt-badge.msp{background:#2a5f7a;}
+  .pt-badge.isv{background:#5a3e7a;}
+  .pt-badge.oem{background:#7a4e1e;}
+  .pt-badge.bp{background:var(--navy-mid);}
+  .pt-info{}
+  .pt-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px;}
+  .pt-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+
+  /* MATRIX */
+  .matrix-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+  .matrix-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:10px 16px;background:var(--cream-dark);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .matrix-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .matrix-table th{background:var(--navy);color:#fff;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.07em;padding:9px 12px;text-align:left;font-weight:400;white-space:nowrap;}
+  .matrix-table th.cat{background:var(--navy-mid);text-align:center;}
+  .matrix-table td{padding:10px 12px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);vertical-align:middle;}
+  .matrix-table td:last-child{border-right:none;}
+  .matrix-table tr:last-child td{border-bottom:none;}
+  .matrix-table tr:nth-child(even) td{background:var(--cream);}
+  .p-name{font-weight:600;color:var(--navy);font-size:12.5px;}
+  .p-type{font-family:'DM Mono',monospace;font-size:10px;margin-top:2px;}
+  .p-type.mssp{color:#1e6640;}
+  .p-type.msp{color:#2a5f7a;}
+  .p-type.isv{color:#5a3e7a;}
+  .p-type.oem{color:#7a4e1e;}
+  .p-type.bp{color:var(--navy-mid);}
+  .cell{text-align:center;}
+  .badge{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;white-space:nowrap;}
+  .badge.h{background:#d4edda;color:var(--green);}
+  .badge.m{background:#fff3cd;color:var(--amber);}
+  .badge.l{background:#f8d7da;color:var(--red);}
+  .badge.cert{background:#dbeafe;color:#1e40af;}
+  .badge.prog{background:#fef3c7;color:#92400e;}
+  .badge.nc{background:#f3f4f6;color:#6b7280;}
+  .matrix-note{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--muted);padding:10px 16px;background:var(--gold-bg);border-top:1px solid var(--border);font-style:italic;line-height:1.6;}
+
+  /* SCORING SUMMARY CARD */
+  .score-summary{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;}
+  .score-summary-header{background:var(--navy);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;}
+  .score-summary-title{font-size:14px;font-weight:600;color:#fff;}
+  .score-summary-note{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:.06em;}
+  .score-bars{padding:20px 22px;display:flex;flex-direction:column;gap:14px;}
+  .score-bar-row{display:grid;grid-template-columns:200px 1fr 40px;align-items:center;gap:14px;}
+  .score-bar-label{font-size:13px;font-weight:500;color:var(--ink);}
+  .score-bar-label span{display:block;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);font-weight:400;margin-top:1px;}
+  .score-bar-track{height:8px;background:var(--cream-dark);border-radius:4px;overflow:hidden;}
+  .score-bar-fill{height:100%;border-radius:4px;}
+  .score-bar-fill.w25{width:25%;background:var(--navy);}
+  .score-bar-fill.w20{width:20%;background:var(--navy-mid);}
+  .score-bar-fill.w15{width:15%;background:var(--navy-light);}
+  .score-bar-fill.w10{width:10%;background:#5a8ab0;}
+  .score-bar-fill.w5{width:5%;background:#8ab0d0;}
+  .score-bar-pts{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--gold);text-align:right;}
+  .score-divider{height:1px;background:var(--border);}
+
+  /* SIGNAL ROWS - new compact layout */
+  .dim-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;}
+  .dim-top{display:flex;align-items:center;gap:0;border-bottom:1px solid var(--border);}
+  .dim-pts{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);padding:14px 18px;border-right:1px solid var(--border);min-width:64px;text-align:center;background:var(--gold-bg);}
+  .dim-info{padding:12px 18px;flex:1;}
+  .dim-title{font-size:13.5px;font-weight:600;color:var(--navy);margin-bottom:3px;}
+  .dim-sub{font-size:12px;color:var(--muted);}
+  .dim-signals{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
+  .sig{padding:12px 16px;border-right:1px solid var(--border);}
+  .sig:last-child{border-right:none;}
+  .sig.g{background:var(--green-bg);}
+  .sig.a{background:var(--amber-bg);}
+  .sig.r{background:var(--red-bg);}
+  .sig-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px;}
+  .sig.g .sig-lbl{color:var(--green);}
+  .sig.a .sig-lbl{color:var(--amber);}
+  .sig.r .sig-lbl{color:var(--red);}
+  .sig p{font-size:12px;line-height:1.5;color:var(--ink);}
+  .dim-note{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);padding:8px 16px;background:var(--gold-bg);border-top:1px solid var(--border);font-style:italic;}
+
+  /* TIERS */
+  .tier-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  .tier{border-radius:10px;padding:18px;text-align:center;}
+  .tier.g{background:var(--green-bg);border:1.5px solid var(--green-border);}
+  .tier.gold{background:var(--gold-bg);border:1.5px solid var(--gold);}
+  .tier.a{background:var(--amber-bg);border:1.5px solid var(--amber-border);}
+  .tier.r{background:var(--red-bg);border:1.5px solid var(--red-border);}
+  .tier-range{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;margin-bottom:4px;}
+  .tier.g .tier-range{color:var(--green);}
+  .tier.gold .tier-range{color:var(--amber);}
+  .tier.a .tier-range{color:var(--amber);}
+  .tier.r .tier-range{color:var(--red);}
+  .tier-name{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;color:var(--muted);}
+  .tier p{font-size:12px;line-height:1.5;color:var(--ink);}
+
+  /* CASE STUDY */
+  .case{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .case-header{background:var(--navy);padding:16px 22px;}
+  .case-eye{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;}
+  .case-title{font-size:15px;font-weight:600;color:#fff;}
+  .case-body{padding:22px;}
+  .case-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px;}
+  .case-box{border-radius:8px;padding:14px 16px;}
+  .case-box.situation{background:var(--cream-dark);border:1px solid var(--border);}
+  .case-box.action{background:#f0f4f8;border:1px solid #c0d0e0;}
+  .case-box.outcome{background:var(--green-bg);border:1px solid var(--green-border);}
+  .case-box-label{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;color:var(--muted);}
+  .case-box.outcome .case-box-label{color:var(--green);}
+  .case-box p{font-size:12.5px;line-height:1.6;}
+  .case-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .score-chip{background:var(--cream);border:1px solid var(--border);border-radius:6px;padding:10px 12px;text-align:center;}
+  .score-chip-dim{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.06em;margin-bottom:5px;}
+  .score-chip-val{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;}
+  .score-chip-val.drop{color:var(--red);}
+  .score-chip-val.recover{color:var(--green);}
+  .score-chip-arrow{font-size:10px;margin:0 3px;}
+
+  /* IMPL */
+  .impl-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px 26px;}
+  .impl-box p{font-size:14px;margin-bottom:14px;line-height:1.75;}
+  .impl-box ul{margin-left:18px;font-size:13.5px;line-height:1.8;}
+  .impl-box li{margin-bottom:6px;}
+  .evol{display:flex;align-items:center;gap:8px;margin-top:18px;padding-top:16px;border-top:1px dashed var(--border);flex-wrap:wrap;}
+  .evol-step{font-family:'DM Mono',monospace;font-size:10.5px;background:var(--cream-dark);border:1px solid var(--border);border-radius:4px;padding:5px 12px;color:var(--navy);}
+  .evol-arrow{color:var(--gold);font-size:14px;}
+
+  /* INTERVENTION TABLE */
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{background:var(--navy);color:#fff;font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.1em;padding:10px 14px;text-align:left;font-weight:400;}
+  td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
+  tr:nth-child(even) td{background:var(--cream);}
+  tr:last-child td{border-bottom:none;}
+
+  .print-btn{position:fixed;bottom:28px;right:28px;background:var(--navy);color:#fff;border:none;border-radius:50px;padding:12px 24px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;box-shadow:0 4px 20px rgba(26,58,92,0.3);transition:all .2s;}
+  .print-btn:hover{background:var(--navy-mid);}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-eye">Portfolio Document · Partner Operations & GTM</div>
+  <h1>Partner Segmentation &amp; Health Scoring Framework</h1>
+  <div class="cover-sub">From partner profiling and technology segmentation through ecosystem health measurement, intervention, and revenue contribution</div>
+
+  <div class="cover-outcomes">
+    <div class="outcome"><div class="outcome-num">25%</div><div class="outcome-label">Partner Attrition<br>Reduction</div></div>
+    <div class="outcome"><div class="outcome-num">40%</div><div class="outcome-label">Platform Engagement<br>Increase</div></div>
+    <div class="outcome"><div class="outcome-num">400%+</div><div class="outcome-label">Quota Attainment<br>IBM NA GTM</div></div>
+    <div class="outcome"><div class="outcome-num">300+</div><div class="outcome-label">Partners Managed<br>Across Ecosystem</div></div>
+  </div>
+
+  <div class="cover-meta">
+    <div class="meta-item"><strong>Author</strong>C. Johnson, MBA</div>
+    <div class="meta-item"><strong>Origin</strong>Excel → CRM/PRM</div>
+    <div class="meta-item"><strong>Ecosystem</strong>MSSP · MSP · ISV · OEM · BP</div>
+    <div class="meta-item"><strong>Applied At</strong>IBM · Denave/GCP</div>
+    <div class="meta-item"><strong>Date</strong>April 2026</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- PHILOSOPHY -->
+  <div class="philosophy">
+    <div class="philosophy-label">The Operating Philosophy</div>
+    <p>Engaged partners build pipeline. Pipeline doesn't build engaged partners.</p>
+    <div class="philosophy-sub">In a partner build motion, the leading indicators are not revenue — they're participation. A partner actively engaged in joint business planning, co-marketing, and governance cadences will generate pipeline. A partner sitting on a roster without engagement will not — regardless of their tier or certification status. This framework was built to measure what actually predicts partner success, intervene early when signals deteriorate, and protect ecosystem ROI before pipeline impact becomes visible.</div>
+  </div>
+
+  <!-- SECTION 1: SEGMENTATION -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <div class="section-title">Partner Segmentation — The Foundation</div>
+    </div>
+
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">Segmentation happens before health scoring. A partner's technology capability, skill level, and certification status determines account assignment eligibility, enablement investment priority, and how health scoring weights are applied. Getting segmentation right is the precondition for everything else.</p>
+
+    <div class="seg-flow">
+      <div class="seg-step">
+        <div class="seg-step-num">Step 1</div>
+        <div class="seg-step-title">Partner Type</div>
+        <p>Classify by go-to-market motion and primary business model. Determines co-sell approach and governance cadence.</p>
+      </div>
+      <div class="seg-step">
+        <div class="seg-step-num">Step 2</div>
+        <div class="seg-step-title">Technology Mapping</div>
+        <p>Map each partner to active technology categories. Partners may operate across multiple categories at different capability levels.</p>
+      </div>
+      <div class="seg-step">
+        <div class="seg-step-num">Step 3</div>
+        <div class="seg-step-title">Skill &amp; Cert Assessment</div>
+        <p>Assess technical skill level (org-level) and certification status per technology category. Updated each cycle.</p>
+      </div>
+      <div class="seg-step">
+        <div class="seg-step-num">Step 4</div>
+        <div class="seg-step-title">Profile → Score</div>
+        <p>Segmentation profile feeds directly into health scoring, account assignment, and MDF allocation decisions.</p>
+      </div>
+    </div>
+
+    <!-- PARTNER TYPES -->
+    <p style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;">Partner Type Definitions</p>
+    <div class="partner-types">
+      <div class="pt-card">
+        <div class="pt-badge mssp">MSSP</div>
+        <div class="pt-info">
+          <div class="pt-name">Managed Security Service Provider</div>
+          <div class="pt-desc">Security is the <em>primary</em> business. Dedicated SOC, 24/7 threat monitoring, incident response. Highest GTM fit for security portfolio co-sell. Engaged from day one if pipeline model is right.</div>
+        </div>
+      </div>
+      <div class="pt-card">
+        <div class="pt-badge msp">MSP</div>
+        <div class="pt-info">
+          <div class="pt-name">Managed Service Provider</div>
+          <div class="pt-desc">Broad IT services — infrastructure, cloud, helpdesk. Security is an expansion play, not core. Requires higher enablement investment. Pipeline follows capability build, not the other way around.</div>
+        </div>
+      </div>
+      <div class="pt-card">
+        <div class="pt-badge isv">ISV</div>
+        <div class="pt-info">
+          <div class="pt-name">Independent Software Vendor</div>
+          <div class="pt-desc">Technology integration partners. Co-sell motion centers on solution bundling and joint value proposition. Pipeline driven by technical integration depth and joint customer base.</div>
+        </div>
+      </div>
+      <div class="pt-card">
+        <div class="pt-badge oem">OEM</div>
+        <div class="pt-info">
+          <div class="pt-name">Original Equipment Manufacturer</div>
+          <div class="pt-desc">Embed or bundle vendor technology into their own product. High-value, high-complexity partnerships. Pipeline metrics operate on different timelines than resell or co-sell partners.</div>
+        </div>
+      </div>
+      <div class="pt-card">
+        <div class="pt-badge bp">BP</div>
+        <div class="pt-info">
+          <div class="pt-name">Business Partner / Reseller</div>
+          <div class="pt-desc">Traditional channel motion — sell-through and co-sell. Pipeline is the primary health signal. Enablement investment directly correlates with quota attainment speed.</div>
+        </div>
+      </div>
+      <div class="pt-card" style="background:var(--gold-bg);border-color:rgba(201,168,76,0.3);">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);line-height:1.65;padding:4px 0;">
+          <strong style="display:block;margin-bottom:4px;font-size:11px;">Key Distinction</strong>
+          MSSPs enter the ecosystem security-ready. MSPs enter IT-ready and build toward security. Health scoring weights reflect this — MSSPs score faster on Pipeline Activity; MSPs score faster on Workshop &amp; JBP Engagement first, then pipeline follows as capability builds.
+        </div>
+      </div>
+    </div>
+
+    <!-- MATRIX -->
+    <div class="matrix-wrap">
+      <div class="matrix-label">
+        <span>Sample Partner Capability Matrix — Technology × Skill × Certification</span>
+        <span style="font-size:9px;">5 of 50 partners shown</span>
+      </div>
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="min-width:130px">Partner</th>
+            <th colspan="3" class="cat" style="text-align:center;border-right:2px solid rgba(255,255,255,0.15)">Data &amp; AI</th>
+            <th colspan="3" class="cat" style="text-align:center;border-right:2px solid rgba(255,255,255,0.15)">Security &amp; GRC</th>
+            <th colspan="2" class="cat" style="text-align:center">Cloud / Observability</th>
+          </tr>
+          <tr>
+            <th>Skill</th><th>Cert</th><th style="border-right:2px solid rgba(255,255,255,0.15)">Eligible</th>
+            <th>Skill</th><th>Cert</th><th style="border-right:2px solid rgba(255,255,255,0.15)">Eligible</th>
+            <th>Skill</th><th>Cert</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="p-name">Partner A</div><div class="p-type mssp">MSSP</div></td>
+            <td class="cell"><span class="badge h">High</span></td>
+            <td class="cell"><span class="badge cert">✓</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge cert">Yes</span></td>
+            <td class="cell"><span class="badge h">High</span></td>
+            <td class="cell"><span class="badge cert">✓</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge cert">Yes</span></td>
+            <td class="cell"><span class="badge m">Med</span></td>
+            <td class="cell"><span class="badge prog">In Prog</span></td>
+          </tr>
+          <tr>
+            <td><div class="p-name">Partner B</div><div class="p-type msp">MSP</div></td>
+            <td class="cell"><span class="badge m">Med</span></td>
+            <td class="cell"><span class="badge prog">In Prog</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge nc">No</span></td>
+            <td class="cell"><span class="badge l">Low</span></td>
+            <td class="cell"><span class="badge nc">✗</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge nc">No</span></td>
+            <td class="cell"><span class="badge h">High</span></td>
+            <td class="cell"><span class="badge cert">✓</span></td>
+          </tr>
+          <tr>
+            <td><div class="p-name">Partner C</div><div class="p-type isv">ISV</div></td>
+            <td class="cell"><span class="badge h">High</span></td>
+            <td class="cell"><span class="badge cert">✓</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge cert">Yes</span></td>
+            <td class="cell"><span class="badge m">Med</span></td>
+            <td class="cell"><span class="badge prog">In Prog</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge nc">No</span></td>
+            <td class="cell"><span class="badge l">Low</span></td>
+            <td class="cell"><span class="badge nc">✗</span></td>
+          </tr>
+          <tr>
+            <td><div class="p-name">Partner D</div><div class="p-type bp">BP</div></td>
+            <td class="cell"><span class="badge h">High</span></td>
+            <td class="cell"><span class="badge cert">✓</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge cert">Yes</span></td>
+            <td class="cell"><span class="badge h">High</span></td>
+            <td class="cell"><span class="badge cert">✓</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge cert">Yes</span></td>
+            <td class="cell"><span class="badge m">Med</span></td>
+            <td class="cell"><span class="badge cert">✓</span></td>
+          </tr>
+          <tr>
+            <td><div class="p-name">Partner E</div><div class="p-type oem">OEM</div></td>
+            <td class="cell"><span class="badge h">High</span></td>
+            <td class="cell"><span class="badge cert">✓</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge cert">Yes</span></td>
+            <td class="cell"><span class="badge l">Low</span></td>
+            <td class="cell"><span class="badge nc">✗</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge nc">No</span></td>
+            <td class="cell"><span class="badge h">High</span></td>
+            <td class="cell"><span class="badge cert">✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="matrix-note">★ Illustrative sample — 5 of 50 partners shown. Full matrix (50 partners × 50+ products across Data &amp; AI, Security &amp; GRC, and Cloud/Observability) maintained in working model. Product catalog includes: watsonx.ai, watsonx.data, watsonx.governance, SPSS Analytics, Cloud Pak for Data, DataStage, OpenPages GRC, Instana APM, IBM Log Analysis, Cognos, DB2/Netezza, RPA, Process Mining, Watson Assistant, FP&amp;A, Red Hat OpenShift, Hybrid Cloud + 30 additional products tracked per partner per cycle. "Eligible" = Certified and skill level sufficient for account assignment in that category.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: SCORING -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <div class="section-title">Health Scoring Model — Six Dimensions</div>
+    </div>
+
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">Total score = 100pts. Weights are engagement-heavy by design — in a partner build motion, active participation is the leading indicator of future revenue. Scored quarterly by the internal partner management team. Not self-reported.</p>
+
+    <!-- SCORE SUMMARY BAR CHART -->
+    <div class="score-summary">
+      <div class="score-summary-header">
+        <span class="score-summary-title">Scoring Weight Distribution</span>
+        <span class="score-summary-note">Engagement-first · Lagging indicators weighted lower</span>
+      </div>
+      <div class="score-bars">
+        <div class="score-bar-row">
+          <div class="score-bar-label">Workshop, Training &amp; JBP<span>Highest predictor in build phase</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill w25" style="width:25%"></div></div>
+          <div class="score-bar-pts">25</div>
+        </div>
+        <div class="score-divider"></div>
+        <div class="score-bar-row">
+          <div class="score-bar-label">QBR &amp; Governance Cadence<span>Executive commitment signal</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:25%;background:var(--navy-mid)"></div></div>
+          <div class="score-bar-pts">25</div>
+        </div>
+        <div class="score-divider"></div>
+        <div class="score-bar-row">
+          <div class="score-bar-label">Co-Marketing &amp; Campaign Planning<span>Active investment in growth</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:20%;background:var(--navy-light)"></div></div>
+          <div class="score-bar-pts">20</div>
+        </div>
+        <div class="score-divider"></div>
+        <div class="score-bar-row">
+          <div class="score-bar-label">Pipeline Activity<span>Lagging — follows engagement</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:15%;background:#5a8ab0"></div></div>
+          <div class="score-bar-pts">15</div>
+        </div>
+        <div class="score-divider"></div>
+        <div class="score-bar-row">
+          <div class="score-bar-label">Platform Adoption<span>Operational signal</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:10%;background:#8ab0d0"></div></div>
+          <div class="score-bar-pts">10</div>
+        </div>
+        <div class="score-divider"></div>
+        <div class="score-bar-row">
+          <div class="score-bar-label">Performance &amp; Satisfaction<span>Internal team qualitative assessment</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:5%;background:#b0d0e8"></div></div>
+          <div class="score-bar-pts">5</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIMENSION CARDS -->
+    <div class="dim-card">
+      <div class="dim-top">
+        <div class="dim-pts">25</div>
+        <div class="dim-info">
+          <div class="dim-title">Workshop, Training &amp; JBP Engagement</div>
+          <div class="dim-sub">Participation in vendor-led workshops, training sessions, and joint business planning activities</div>
+        </div>
+      </div>
+      <div class="dim-signals">
+        <div class="sig g"><div class="sig-lbl">✓ Healthy</div><p>Actively attends workshops and training; JBP in place with current targets and milestones; exec sponsor engaged in joint planning</p></div>
+        <div class="sig a"><div class="sig-lbl">⚠ At Risk</div><p>Attending some sessions but not all; JBP exists but not actively reviewed; exec sponsor disengaged from planning sessions</p></div>
+        <div class="sig r"><div class="sig-lbl">✗ Critical</div><p>Not participating in workshops or training; no active JBP; joint planning sessions missed or declined for 2+ cycles</p></div>
+      </div>
+    </div>
+
+    <div class="dim-card">
+      <div class="dim-top">
+        <div class="dim-pts">25</div>
+        <div class="dim-info">
+          <div class="dim-title">QBR &amp; Governance Cadence</div>
+          <div class="dim-sub">Attendance and engagement quality in quarterly business reviews and governance calls</div>
+        </div>
+      </div>
+      <div class="dim-signals">
+        <div class="sig g"><div class="sig-lbl">✓ Healthy</div><p>100% QBR attendance; executive sponsor present; action items completed between reviews; strategic conversations, not status updates</p></div>
+        <div class="sig a"><div class="sig-lbl">⚠ At Risk</div><p>Missed 1 QBR; operational-level attendance only (no exec sponsor); action item follow-through inconsistent</p></div>
+        <div class="sig r"><div class="sig-lbl">✗ Critical</div><p>Missed 2+ QBRs; no executive engagement; non-responsive to governance cadence; calls rescheduled repeatedly</p></div>
+      </div>
+    </div>
+
+    <div class="dim-card">
+      <div class="dim-top">
+        <div class="dim-pts">20</div>
+        <div class="dim-info">
+          <div class="dim-title">Co-Marketing &amp; Campaign Planning Participation</div>
+          <div class="dim-sub">Engagement in joint campaigns, MDF utilization, webinars, field events, and campaign planning sessions</div>
+        </div>
+      </div>
+      <div class="dim-signals">
+        <div class="sig g"><div class="sig-lbl">✓ Healthy</div><p>Active in 2+ co-marketing programs per quarter; MDF fully utilized; engaged in campaign planning; contributing ideas and resources</p></div>
+        <div class="sig a"><div class="sig-lbl">⚠ At Risk</div><p>Participating in 1 program; partial MDF utilization; attending but not contributing to campaign planning</p></div>
+        <div class="sig r"><div class="sig-lbl">✗ Critical</div><p>Zero co-marketing participation; MDF unused; not responding to campaign planning outreach</p></div>
+      </div>
+    </div>
+
+    <div class="dim-card">
+      <div class="dim-top">
+        <div class="dim-pts">15</div>
+        <div class="dim-info">
+          <div class="dim-title">Pipeline Activity</div>
+          <div class="dim-sub">Active opportunities, deal velocity, and pipeline contribution vs. quarterly target — a lagging indicator that follows engagement</div>
+        </div>
+      </div>
+      <div class="dim-signals">
+        <div class="sig g"><div class="sig-lbl">✓ Healthy</div><p>At or above quarterly pipeline target; new opportunities added monthly; deal velocity on track; partner-sourced opps converting</p></div>
+        <div class="sig a"><div class="sig-lbl">⚠ At Risk</div><p>Pipeline 50–75% of target; opportunities stagnant; no new deals in 30 days; velocity slowing</p></div>
+        <div class="sig r"><div class="sig-lbl">✗ Critical</div><p>Below 50% of target; zero new opportunities in 60+ days; existing pipeline stalled with no movement</p></div>
+      </div>
+      <div class="dim-note">Note: Pipeline is weighted lower by design. In a build motion, a partner with strong JBP, QBR, and co-marketing engagement but developing pipeline is healthier than a partner with one recent deal and zero engagement. Pipeline follows — it does not lead.</div>
+    </div>
+
+    <div class="dim-card">
+      <div class="dim-top">
+        <div class="dim-pts">10</div>
+        <div class="dim-info">
+          <div class="dim-title">Platform Adoption</div>
+          <div class="dim-sub">Active usage of platform tools, portal, and partner-facing resources per technology category</div>
+        </div>
+      </div>
+      <div class="dim-signals">
+        <div class="sig g"><div class="sig-lbl">✓ Healthy</div><p>Regular portal usage; 80%+ feature adoption; using partner-facing tools independently without prompting</p></div>
+        <div class="sig a"><div class="sig-lbl">⚠ At Risk</div><p>Logging in but not utilizing key features; using 1–2 tools only; requires prompting to engage with platform resources</p></div>
+        <div class="sig r"><div class="sig-lbl">✗ Critical</div><p>No login in 30+ days; zero tool usage; portal access not activated or abandoned after onboarding</p></div>
+      </div>
+    </div>
+
+    <div class="dim-card">
+      <div class="dim-top">
+        <div class="dim-pts">5</div>
+        <div class="dim-info">
+          <div class="dim-title">Performance &amp; Satisfaction</div>
+          <div class="dim-sub">Internal team assessment of partner engagement quality, contribution, and working relationship — scored by the partner management team, not self-reported</div>
+        </div>
+      </div>
+      <div class="dim-signals">
+        <div class="sig g"><div class="sig-lbl">✓ Healthy (8–10)</div><p>Proactively participating and contributing — brings ideas, engages constructively, advocates for the program internally</p></div>
+        <div class="sig a"><div class="sig-lbl">⚠ At Risk (6–7)</div><p>Passive participant — responsive but not proactive; expressing friction without escalating constructively</p></div>
+        <div class="sig r"><div class="sig-lbl">✗ Critical (&lt;6)</div><p>Poor working relationship — unresponsive, adversarial, or actively disengaged from program objectives</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: TIERS -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">03</div><div class="section-title">Score Tiers &amp; Response Protocol</div></div>
+    <div class="tier-row">
+      <div class="tier g"><div class="tier-range">85–100</div><div class="tier-name">Champion</div><p>Prioritize for JBP expansion, co-marketing investment, and advisory board participation. Recognize publicly.</p></div>
+      <div class="tier gold"><div class="tier-range">70–84</div><div class="tier-name">Active</div><p>Maintain cadence. Identify 1–2 dimensions to strengthen. Growth-focused conversation at next QBR.</p></div>
+      <div class="tier a"><div class="tier-range">50–69</div><div class="tier-name">At Risk</div><p>Trigger intervention playbook within 2 weeks. Identify root cause — engagement gap, capacity, or motivation.</p></div>
+      <div class="tier r"><div class="tier-range">0–49</div><div class="tier-name">Critical</div><p>Executive escalation. 30-day recovery plan or structured offboarding to protect ecosystem ROI.</p></div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: CASE STUDY -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">04</div><div class="section-title">Case Study — Early Detection in Practice</div></div>
+    <div class="case">
+      <div class="case-header">
+        <div class="case-eye">Anonymized · IBM Partner Ecosystem · Data &amp; AI Portfolio</div>
+        <div class="case-title">MSSP Partner: Score drop caught before pipeline impact — recovered within 45 days</div>
+      </div>
+      <div class="case-body">
+        <div class="case-grid">
+          <div class="case-box situation">
+            <div class="case-box-label">Situation</div>
+            <p>Routine quarterly scoring flagged a Tier 1 MSSP dropping from 84 to 61. Revenue pipeline still showed $240K active. Without the health score, nothing would have triggered a review for another quarter.</p>
+          </div>
+          <div class="case-box action">
+            <div class="case-box-label">Root Cause &amp; Intervention</div>
+            <p>Platform adoption had dropped to zero — a product update had broken their integration workflow. Discovery call in Week 2 surfaced the issue. Escalated to Product team; resolved within 10 days. New QBP agreed with exec sponsor re-engaged.</p>
+          </div>
+          <div class="case-box outcome">
+            <div class="case-box-label">Outcome</div>
+            <p>Health score recovered to 79 within 45 days. Existing $240K pipeline closed. Two new opportunities added in the following quarter. Partner became a reference for the program.</p>
+          </div>
+        </div>
+        <p style="font-family:'DM Mono',monospace;font-size:10.5px;color:var(--muted);margin-bottom:12px;letter-spacing:.06em;text-transform:uppercase;">Score Movement Across Key Dimensions</p>
+        <div class="case-scores">
+          <div class="score-chip"><div class="score-chip-dim">Platform Adoption</div><div class="score-chip-val drop">20 → 0<span class="score-chip-arrow">→</span><span style="color:var(--green)">18</span></div></div>
+          <div class="score-chip"><div class="score-chip-dim">QBR Cadence</div><div class="score-chip-val drop">22 → 14<span class="score-chip-arrow">→</span><span style="color:var(--green)">22</span></div></div>
+          <div class="score-chip"><div class="score-chip-dim">Workshop &amp; JBP</div><div class="score-chip-val drop">24 → 18<span class="score-chip-arrow">→</span><span style="color:var(--green)">23</span></div></div>
+          <div class="score-chip"><div class="score-chip-dim">Pipeline Activity</div><div class="score-chip-val" style="color:var(--amber)">Stable → Growing</div></div>
+          <div class="score-chip"><div class="score-chip-dim">Composite Score</div><div class="score-chip-val drop">84 → 61<span class="score-chip-arrow">→</span><span style="color:var(--green)">79</span></div></div>
+          <div class="score-chip"><div class="score-chip-dim">Time to Recovery</div><div class="score-chip-val recover">45 days</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: INTERVENTION -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">05</div><div class="section-title">Intervention Playbook — At Risk Partners</div></div>
+    <table>
+      <thead><tr><th>Timing</th><th>Action</th><th>Owner</th><th>Goal</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Week 1</strong></td><td>Score alert triggered. Partner manager reviews all 6 dimensions to identify which drove the decline — single dimension drop vs. broad deterioration tells a very different story</td><td>Partner Manager</td><td>Root cause identified</td></tr>
+        <tr><td><strong>Week 2</strong></td><td>Discovery call — open conversation on friction points, capacity constraints, or motivation gap. Listen first. Do not arrive with solutions before understanding the problem.</td><td>Partner Manager</td><td>Partner perspective understood</td></tr>
+        <tr><td><strong>Week 3</strong></td><td>30-day recovery plan agreed — specific actions tied to the lowest-scoring dimensions. Exec sponsor looped in if QBR Cadence or JBP Engagement drove the drop.</td><td>Partner Manager + Leadership</td><td>Signed recovery plan</td></tr>
+        <tr><td><strong>Day 30</strong></td><td>Score re-assessed against all dimensions. 70+: return to Active track with note in record. Below 50: escalate to VP for structured offboarding decision to protect ecosystem ROI.</td><td>Partner Manager + VP</td><td>Resolution or structured exit</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 6: IMPLEMENTATION -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">06</div><div class="section-title">Model Evolution &amp; Implementation</div></div>
+    <div class="impl-box">
+      <p>Originally designed in Microsoft Excel to manage a 300+ partner ecosystem at IBM — before CRM workflow automation was available at the required scale. Upgraded to CRM/PRM as tooling matured, enabling automation of alerts, dashboards, and QBR prep reporting that previously required manual assembly.</p>
+      <ul>
+        <li><strong>Excel (origin)</strong> — Partner segmentation matrix (50 partners × 50+ products), manual quarterly scoring per dimension, pivot table reporting, conditional formatting for tier classification and at-risk flagging</li>
+        <li><strong>CRM/PRM (upgraded)</strong> — Custom partner account fields per dimension, threshold-triggered alerts, real-time health leaderboard, QBR prep auto-generation, renewal forecasting weighted by health score</li>
+        <li><strong>Scoring cadence</strong> — Quarterly assessment by the internal partner management team. Segmentation profile updated when a partner advances certification or enters a new technology category</li>
+        <li><strong>Account assignment gate</strong> — Segmentation profile (skill level + certification status per technology) determines account assignment eligibility. Partners with Low skill or uncertified status are not assigned accounts in that technology until profile improves</li>
+      </ul>
+      <div class="evol">
+        <div class="evol-step">Excel — Manual Scoring</div>
+        <div class="evol-arrow">→</div>
+        <div class="evol-step">Salesforce CRM</div>
+        <div class="evol-arrow">→</div>
+        <div class="evol-step">PRM Integration</div>
+        <div class="evol-arrow">→</div>
+        <div class="evol-step">Automated Alerts + Dashboards</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<button class="print-btn no-print" onclick="window.print()">🖨 Print / Save PDF</button>
+</body>
+</html>

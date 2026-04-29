@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SFDC Partner Analytics — Cory Johanson</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  @media print { body { background: white; } .no-print { display: none; } }
+  :root { --navy: #1A3A5C; --gold: #C9A84C; --cream: #F7F4EF; --ink: #1c1c1c; --muted: #6b6560; --border: #ddd8cf; --surface: #FDFBF8; --green: #2d6a4f; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--ink); line-height: 1.7; }
+  .cover { background: var(--navy); padding: 48px 64px 40px; border-bottom: 5px solid var(--gold); }
+  .cover-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; }
+  .cover h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 38px; color: #fff; font-weight: 900; line-height: 1.15; margin-bottom: 10px; }
+  .cover-sub { font-size: 16px; color: rgba(255,255,255,0.6); font-style: italic; margin-bottom: 28px; }
+  .cover-meta { display: flex; gap: 28px; flex-wrap: wrap; }
+  .meta-item { font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.5); }
+  .meta-item strong { color: var(--gold); display: block; font-size: 12px; margin-bottom: 2px; }
+  .container { max-width: 900px; margin: 0 auto; padding: 44px 32px 80px; }
+  .intro { background: var(--surface); border-left: 4px solid var(--gold); padding: 20px 24px; margin-bottom: 36px; border-radius: 0 8px 8px 0; font-size: 14.5px; line-height: 1.75; }
+  .section { margin-bottom: 40px; }
+  .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 2px solid var(--navy); }
+  .section-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 32px; font-weight: 900; color: var(--gold); opacity: 0.5; line-height: 1; }
+  .section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; color: var(--navy); font-weight: 700; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 26px; margin-bottom: 14px; }
+  .card-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--navy); letter-spacing: 0.08em; margin-bottom: 12px; text-transform: uppercase; }
+  .card p { font-size: 14px; line-height: 1.7; margin-bottom: 8px; color: #3a3530; }
+  .card ul { margin: 8px 0 0 18px; }
+  .card ul li { font-size: 14px; line-height: 1.65; margin-bottom: 6px; color: #3a3530; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .outcome-card { background: var(--navy); border-radius: 10px; padding: 20px; text-align: center; }
+  .outcome-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 36px; font-weight: 900; color: var(--gold); }
+  .outcome-label { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: 0.1em; margin-top: 4px; }
+  .outcome-context { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 6px; font-style: italic; }
+  .flow { display: flex; align-items: center; gap: 0; margin: 16px 0; }
+  .flow-step { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; text-align: center; }
+  .flow-arrow { font-size: 20px; color: var(--gold); padding: 0 8px; flex-shrink: 0; }
+  .flow-step-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 4px; }
+  .flow-step-title { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .flow-step p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { background: var(--navy); color: #fff; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; padding: 10px 14px; text-align: left; font-weight: 400; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; }
+  tr:nth-child(even) td { background: var(--cream); }
+  .badge { display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 20px; }
+  .badge.green { background: #d4edda; color: var(--green); }
+  .badge.amber { background: #fff3cd; color: #7a5a00; }
+  .badge.red { background: #f8d7da; color: #8b2020; }
+  .print-btn { position: fixed; bottom: 28px; right: 28px; background: var(--navy); color: #fff; border: none; border-radius: 50px; padding: 12px 24px; font-family: 'DM Mono', monospace; font-size: 12px; cursor: pointer; box-shadow: 0 4px 20px rgba(26,58,92,0.3); }
+</style>
+</head>
+<body>
+<div class="cover">
+  <div class="cover-eyebrow">Portfolio Document · Partner Analytics</div>
+  <h1>SFDC Partner Analytics</h1>
+  <div class="cover-sub">Using Salesforce pipeline data to identify MSSP churn risk, deploy GTM interventions, and optimize ecosystem performance</div>
+  <div class="cover-meta">
+    <div class="meta-item"><strong>Author</strong>C. Johnson, MBA</div>
+    <div class="meta-item"><strong>Platform</strong>Salesforce CRM/PRM</div>
+    <div class="meta-item"><strong>Ecosystem</strong>MSSP · MSP · GSI · VAR</div>
+    <div class="meta-item"><strong>Date</strong>April 2026</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="intro">
+    This document describes the Salesforce-based partner analytics approach developed across IBM's North America GTM organization (300+ partners: MSSPs, ISVs, OEMs, and Business Partners) and subsequently applied to Google's GCP partner program via Denave (MSSP-focused network, under 100 partners). The methodology centers on using leading-indicator data to identify at-risk partners before pipeline impact is visible, and deploying targeted GTM interventions that measurably improve ecosystem health and revenue contribution. Applied to the Denave/GCP program, this approach delivered a 25% reduction in partner attrition and a 40% increase in platform activation among priority partners.
+  </div>
+
+  <!-- OUTCOMES -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">01</div><div class="section-title">Outcomes Achieved</div></div>
+    <div class="grid-3" style="margin-bottom:14px">
+      <div class="outcome-card"><div class="outcome-num">25%</div><div class="outcome-label">Attrition Reduction</div><div class="outcome-context">MSSP and VAR partner churn</div></div>
+      <div class="outcome-card"><div class="outcome-num">40%</div><div class="outcome-label">Engagement Increase</div><div class="outcome-context">Platform activation, priority partners</div></div>
+      <div class="outcome-card"><div class="outcome-num">400%+</div><div class="outcome-label">Quota Attainment</div><div class="outcome-context">IBM NA GTM, partner-sourced</div></div>
+    </div>
+    <div class="card">
+      <p>These outcomes resulted directly from shifting partner management from a reactive, revenue-lag approach (looking at closed deals) to a proactive, leading-indicator approach (monitoring adoption, engagement, and pipeline velocity signals before they impact revenue).</p>
+    </div>
+  </div>
+
+  <!-- THE ANALYTICS FRAMEWORK -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">02</div><div class="section-title">The Analytics Framework</div></div>
+
+    <div class="flow">
+      <div class="flow-step"><div class="flow-step-num">Step 1</div><div class="flow-step-title">Data Collection</div><p>SFDC custom fields capture 6 health dimensions per partner on a rolling 30-day basis</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-num">Step 2</div><div class="flow-step-title">Score Calculation</div><p>Composite health score auto-calculated; partners flagged by tier (Champion / Active / At Risk / Critical)</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-num">Step 3</div><div class="flow-step-title">Alert & Review</div><p>Automated alerts trigger when score drops below 70 or any dimension hits zero</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="flow-step-num">Step 4</div><div class="flow-step-title">Intervention</div><p>Partner manager deploys targeted playbook based on which dimension(s) are driving the decline</p></div>
+    </div>
+  </div>
+
+  <!-- KEY SFDC REPORTS -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">03</div><div class="section-title">Key SFDC Reports & Dashboards</div></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Partner Health Leaderboard</div>
+        <p>Real-time ranking of all partners by composite health score. Filters by partner type (MSSP, GSI, VAR), region, and tier. Updated automatically as SFDC data refreshes.</p>
+        <ul>
+          <li>Color-coded by tier (green / amber / red)</li>
+          <li>Drill-down to dimension-level breakdown per partner</li>
+          <li>30/60/90-day trend line per partner</li>
+          <li>At-Risk flag with days since alert triggered</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">Pipeline Velocity Tracker</div>
+        <p>Monitors opportunity creation rate, stage progression, and deal velocity per partner. Leading indicator for revenue impact before deals close or stall.</p>
+        <ul>
+          <li>New opportunities created (last 30 days) per partner</li>
+          <li>Average days in stage — flags stalled deals</li>
+          <li>Partner pipeline vs. quarterly target (% attainment)</li>
+          <li>Win rate by partner type and segment</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">Renewal Forecasting Model</div>
+        <p>Combines health score, contract end date, and pipeline activity to produce a renewal probability score for each partner relationship.</p>
+        <ul>
+          <li>Renewal probability: High / Medium / Low / At Risk</li>
+          <li>90-day pre-renewal alert for At Risk partners</li>
+          <li>Intervention trigger linked to renewal forecast</li>
+          <li>Historical renewal rate by health score tier</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">QBR Prep Report</div>
+        <p>Auto-generated partner report pulled before each quarterly business review. Gives partner managers and executives a complete picture of partner performance without manual data assembly.</p>
+        <ul>
+          <li>90-day health score trend</li>
+          <li>Dimension breakdown with flags</li>
+          <li>Pipeline summary and win rate</li>
+          <li>Open action items from last QBR</li>
+          <li>Co-marketing participation and MDF utilization</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CASE EXAMPLE -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">04</div><div class="section-title">Case Example — MSSP Churn Prevention</div></div>
+    <div class="card">
+      <div class="card-title">Situation</div>
+      <p>During a routine weekly health score review, three MSSP partners dropped below the 70-point threshold simultaneously. Revenue data showed no impact yet — all three had active pipeline. But the health score flagged declining platform adoption and zero co-marketing participation for 45+ days.</p>
+    </div>
+    <table style="margin-bottom:14px">
+      <thead><tr><th>Partner</th><th>Health Score</th><th>Primary Dimension Drop</th><th>Pipeline Status</th><th>Risk</th></tr></thead>
+      <tbody>
+        <tr><td>MSSP Partner A</td><td>64</td><td>Platform Adoption (↓18pts)</td><td>Active — $240K pipeline</td><td><span class="badge amber">At Risk</span></td></tr>
+        <tr><td>MSSP Partner B</td><td>58</td><td>Co-Marketing Participation (↓15pts) + QBR Attendance (↓10pts)</td><td>Stagnant — no new opps in 45 days</td><td><span class="badge red">Critical</span></td></tr>
+        <tr><td>MSSP Partner C</td><td>61</td><td>Training Completion (↓12pts)</td><td>Active — $180K pipeline</td><td><span class="badge amber">At Risk</span></td></tr>
+      </tbody>
+    </table>
+    <div class="card">
+      <div class="card-title">Intervention & Outcome</div>
+      <ul>
+        <li><strong>Partner A</strong> — Discovery call revealed platform update had broken their integration workflow. Escalated to Product team, resolved within 2 weeks. Health score recovered to 81 within 30 days. Deal closed.</li>
+        <li><strong>Partner B</strong> — Low engagement traced to internal reorganization. New executive sponsor identified and engaged. Recovery plan agreed. Health score improved to 72 within 45 days.</li>
+        <li><strong>Partner C</strong> — Training backlog due to headcount change. Dedicated enablement session scheduled. Certifications current within 3 weeks. Health score recovered to 78.</li>
+      </ul>
+      <p style="margin-top:12px;font-style:italic;color:var(--muted);font-size:13px">Without the health scoring alert system, these three partners would likely have churned within 90 days — representing approximately $420K in at-risk pipeline and significant replacement cost.</p>
+    </div>
+  </div>
+
+  <!-- SFDC SETUP -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">05</div><div class="section-title">SFDC Configuration Summary</div></div>
+    <table>
+      <thead><tr><th>Component</th><th>Description</th><th>Update Frequency</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Custom Object: Partner Health</strong></td><td>6 dimension score fields (numeric) + composite score formula field + tier classification (picklist)</td><td>Weekly (manual + auto)</td></tr>
+        <tr><td><strong>Workflow Rules</strong></td><td>Alert to partner manager when composite drops below 70 or any dimension = 0</td><td>Real-time trigger</td></tr>
+        <tr><td><strong>Dashboard: Ecosystem Health</strong></td><td>Leaderboard, at-risk list, trend charts, dimension breakdown, renewal forecast</td><td>Live (SFDC refresh)</td></tr>
+        <tr><td><strong>Report: QBR Prep</strong></td><td>Partner-specific 90-day summary; scheduled to generate 5 days before each QBR</td><td>Scheduled auto-generate</td></tr>
+        <tr><td><strong>Pipeline Velocity Report</strong></td><td>New opps, stage velocity, win rate by partner and segment</td><td>Weekly review</td></tr>
+        <tr><td><strong>Renewal Forecast Model</strong></td><td>Probability score combining health score + contract date + pipeline + last QBR outcome</td><td>Monthly recalculation</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<button class="print-btn no-print" onclick="window.print()">🖨 Print / Save PDF</button>
+</body>
+</html>

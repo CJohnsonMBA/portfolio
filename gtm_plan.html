@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSP/MSSP Security GTM Plan — C. Johnson, MBA</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  @media print{body{background:white;font-size:10pt;}.no-print{display:none;}.page-break{page-break-before:always;}}
+  :root{
+    --navy:#1A3A5C;--navy-mid:#2a4f7a;--navy-light:#3a6494;
+    --gold:#C9A84C;--gold-bg:rgba(201,168,76,0.08);--gold-border:rgba(201,168,76,0.3);
+    --cream:#F7F4EF;--cream-dark:#EDE9E0;
+    --ink:#1c1c1c;--muted:#6b6560;--border:#ddd8cf;--surface:#FDFBF8;
+    --green:#1e6640;--green-bg:#f0f7f4;--green-border:#a8d5be;
+    --amber:#7a5a00;--amber-bg:#fdf6e3;
+    --red:#8b2020;--red-bg:#fdf0f0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--ink);line-height:1.65;font-size:15px;}
+
+  /* COVER */
+  .cover{background:var(--navy);padding:52px 64px 44px;border-bottom:4px solid var(--gold);position:relative;overflow:hidden;}
+  .cover::after{content:'';position:absolute;top:-100px;right:-100px;width:450px;height:450px;border:80px solid rgba(201,168,76,0.06);border-radius:50%;pointer-events:none;}
+  .cover-eye{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:14px;}
+  .cover h1{font-size:36px;color:#fff;font-weight:700;line-height:1.15;margin-bottom:8px;}
+  .cover-sub{font-size:15px;color:rgba(255,255,255,0.55);font-style:italic;margin-bottom:36px;max-width:640px;}
+  .cover-outcomes{display:flex;gap:0;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.12);margin-bottom:32px;}
+  .outcome{flex:1;padding:16px 20px;border-right:1px solid rgba(255,255,255,0.1);}
+  .outcome:last-child{border-right:none;}
+  .outcome-num{font-size:28px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:4px;}
+  .outcome-label{font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;line-height:1.4;}
+  .cover-meta{display:flex;gap:24px;flex-wrap:wrap;}
+  .meta-item{font-family:'DM Mono',monospace;font-size:10.5px;color:rgba(255,255,255,0.4);}
+  .meta-item strong{color:var(--gold);display:block;font-size:11px;margin-bottom:2px;}
+
+  /* LAYOUT */
+  .container{max-width:960px;margin:0 auto;padding:48px 32px 80px;}
+  .section{margin-bottom:52px;}
+  .section-header{display:flex;align-items:center;gap:14px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid var(--navy);}
+  .section-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.1em;background:var(--gold-bg);border:1px solid var(--gold-border);padding:5px 10px;border-radius:4px;}
+  .section-title{font-size:19px;color:var(--navy);font-weight:700;}
+  .section-context{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;margin-left:auto;}
+
+  /* PHILOSOPHY */
+  .philosophy{background:var(--navy);border-radius:12px;padding:28px 32px;margin-bottom:44px;position:relative;overflow:hidden;}
+  .philosophy::before{content:'"';position:absolute;top:-20px;left:20px;font-size:140px;color:rgba(201,168,76,0.08);font-weight:700;line-height:1;}
+  .philosophy-label{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--gold);letter-spacing:.18em;text-transform:uppercase;margin-bottom:12px;position:relative;}
+  .philosophy p{font-size:17px;font-weight:600;color:#fff;line-height:1.55;margin-bottom:10px;position:relative;}
+  .philosophy-sub{font-size:13.5px;color:rgba(255,255,255,0.55);line-height:1.75;position:relative;}
+
+  /* MARKET CONTEXT - compact */
+  .market-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:14px;}
+  .mstat{padding:16px;border-right:1px solid var(--border);background:var(--surface);text-align:center;}
+  .mstat:last-child{border-right:none;}
+  .mstat-num{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+  .mstat-label{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:.06em;line-height:1.4;}
+  .mstat-year{font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);margin-top:3px;}
+  .market-note{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--muted);padding:10px 16px;background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:8px;margin-bottom:20px;line-height:1.65;}
+
+  /* VALUE PROP */
+  .vp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+  .vp-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;}
+  .vp-icon{font-size:22px;margin-bottom:10px;}
+  .vp-title{font-size:13.5px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+  .vp-desc{font-size:12.5px;color:var(--muted);line-height:1.65;}
+  .vp-proof{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);background:var(--green-bg);border:1px solid var(--green-border);border-radius:4px;padding:5px 8px;margin-top:10px;line-height:1.5;}
+
+  /* SEGMENTATION */
+  .seg-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:20px;}
+  .seg-step{padding:18px 16px;border-right:1px solid var(--border);background:var(--surface);}
+  .seg-step:last-child{border-right:none;}
+  .seg-step-num{font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px;}
+  .seg-step-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px;}
+  .seg-step p{font-size:12px;color:var(--muted);line-height:1.55;}
+
+  /* MATRIX */
+  .matrix-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+  .matrix-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:10px 16px;background:var(--cream-dark);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+  .matrix-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .matrix-table th{background:var(--navy);color:#fff;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.07em;padding:9px 12px;text-align:left;font-weight:400;white-space:nowrap;}
+  .matrix-table th.cat{background:var(--navy-mid);text-align:center;}
+  .matrix-table td{padding:10px 12px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);vertical-align:middle;}
+  .matrix-table td:last-child{border-right:none;}
+  .matrix-table tr:last-child td{border-bottom:none;}
+  .matrix-table tr:nth-child(even) td{background:var(--cream);}
+  .p-name{font-weight:600;color:var(--navy);font-size:12.5px;}
+  .p-type{font-family:'DM Mono',monospace;font-size:10px;margin-top:2px;color:var(--navy-mid);}
+  .cell{text-align:center;}
+  .badge{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;white-space:nowrap;}
+  .badge.h{background:#d4edda;color:var(--green);}
+  .badge.m{background:#fff3cd;color:var(--amber);}
+  .badge.l{background:#f8d7da;color:var(--red);}
+  .badge.cert{background:#dbeafe;color:#1e40af;}
+  .badge.prog{background:#fef3c7;color:#92400e;}
+  .badge.nc{background:#f3f4f6;color:#6b7280;}
+  .matrix-note{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--muted);padding:10px 16px;background:var(--gold-bg);border-top:1px solid var(--border);font-style:italic;line-height:1.6;}
+
+  /* STRATEGY PILLARS */
+  .pillar-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+  .pillar-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .pillar-header{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .pillar-num{font-family:'DM Mono',monospace;font-size:11px;color:#fff;background:var(--navy);padding:3px 10px;border-radius:4px;}
+  .pillar-title{font-size:13.5px;font-weight:700;color:var(--navy);}
+  .pillar-body{padding:16px 18px;}
+  .pillar-body p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:10px;}
+  .pillar-body ul{margin-left:16px;font-size:13px;color:var(--ink);line-height:1.75;}
+  .pillar-body li{margin-bottom:5px;}
+  .pillar-proof{background:var(--navy);padding:12px 18px;}
+  .pillar-proof-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px;}
+  .pillar-proof p{font-size:12px;color:rgba(255,255,255,0.65);line-height:1.6;}
+  .pillar-kpis{background:var(--cream-dark);border-top:1px solid var(--border);padding:11px 18px;}
+  .pillar-kpis-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
+  .kpi-chips{display:flex;flex-wrap:wrap;gap:5px;}
+  .kpi-chip{font-family:'DM Mono',monospace;font-size:10px;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:3px 8px;color:var(--navy);}
+
+  /* ENABLEMENT */
+  .enable-vs{background:var(--navy);border-radius:10px;padding:20px 24px;margin-bottom:16px;}
+  .enable-vs-title{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;}
+  .enable-vs-row{display:grid;grid-template-columns:1fr 36px 1fr;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.08);}
+  .enable-vs-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+  .enable-vs-old{font-size:12.5px;color:rgba(255,255,255,0.35);text-decoration:line-through;}
+  .enable-vs-arrow{text-align:center;color:var(--gold);font-size:14px;}
+  .enable-vs-new{font-size:12.5px;color:#fff;font-weight:500;}
+  .enable-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .enable-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;}
+  .enable-icon{font-size:20px;margin-bottom:8px;}
+  .enable-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+  .enable-body{font-size:12.5px;color:var(--muted);line-height:1.65;}
+
+  /* COMPLIANCE */
+  .compliance-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+  .compliance-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .comp-header{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .comp-badge{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:#fff;padding:3px 9px;border-radius:4px;}
+  .b-hipaa{background:#5c3a1a;}
+  .b-sox{background:#1a5c3a;}
+  .b-nist{background:#5c1a3a;}
+  .b-gdpr{background:#1e3a6e;}
+  .comp-title{font-size:13px;font-weight:600;color:var(--navy);}
+  .comp-body{padding:13px 16px;}
+  .comp-body p{font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:8px;}
+  .comp-body ul{margin-left:14px;font-size:12px;color:var(--ink);line-height:1.7;}
+  .comp-entry{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);background:var(--green-bg);border:1px solid var(--green-border);border-radius:4px;padding:5px 10px;margin-top:8px;}
+
+  /* JOINT GTM */
+  .joint-table{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+  .joint-header{display:grid;grid-template-columns:140px 1fr 1fr 1fr;background:var(--navy);}
+  .joint-hcell{font-family:'DM Mono',monospace;font-size:9.5px;color:rgba(255,255,255,0.65);letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;border-right:1px solid rgba(255,255,255,0.1);}
+  .joint-hcell:last-child{border-right:none;}
+  .joint-row{display:grid;grid-template-columns:140px 1fr 1fr 1fr;border-bottom:1px solid var(--border);}
+  .joint-row:last-child{border-bottom:none;}
+  .joint-row:nth-child(even){background:var(--cream);}
+  .joint-cell{padding:11px 14px;border-right:1px solid var(--border);font-size:12.5px;line-height:1.6;}
+  .joint-cell:last-child{border-right:none;}
+  .joint-cell.label{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.06em;font-weight:500;display:flex;align-items:center;}
+
+  /* ECOSYSTEM */
+  .eco-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .eco-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;}
+  .eco-icon{font-size:20px;margin-bottom:8px;}
+  .eco-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+  .eco-desc{font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:8px;}
+  .eco-examples{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--navy);background:var(--cream-dark);border-radius:4px;padding:6px 10px;line-height:1.7;}
+
+  /* ROADMAP */
+  .roadmap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+  .rphase-header{padding:14px 18px;border-bottom:1px solid var(--border);}
+  .rphase-header.p1{background:#1A3A5C;}
+  .rphase-header.p2{background:#2a4f7a;}
+  .rphase-header.p3{background:#3a6494;}
+  .rphase-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;}
+  .rphase-title{font-size:14px;font-weight:600;color:#fff;}
+  .rphase-time{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.45);margin-top:2px;}
+  .rphase-body{padding:16px 18px;background:var(--surface);border-right:1px solid var(--border);}
+  .rphase:last-child .rphase-body{border-right:none;}
+  .rphase-body ul{margin-left:14px;font-size:12.5px;line-height:1.75;}
+  .rphase-body li{margin-bottom:5px;color:var(--ink);}
+
+  /* RESULTS */
+  .results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;}
+  .result-card{background:var(--navy);border-radius:10px;padding:20px;text-align:center;}
+  .result-num{font-size:32px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:6px;}
+  .result-label{font-family:'DM Mono',monospace;font-size:9.5px;color:rgba(255,255,255,0.5);letter-spacing:.1em;text-transform:uppercase;line-height:1.4;}
+  .result-context{font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;font-style:italic;}
+
+  /* KPI TABLE */
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{background:var(--navy);color:#fff;font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.1em;padding:10px 14px;text-align:left;font-weight:400;}
+  td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
+  tr:nth-child(even) td{background:var(--cream);}
+  tr:last-child td{border-bottom:none;}
+  .kpi-cat{font-family:'DM Mono',monospace;font-size:10px;color:var(--navy);font-weight:500;}
+
+  .print-btn{position:fixed;bottom:28px;right:28px;background:var(--navy);color:#fff;border:none;border-radius:50px;padding:12px 24px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;box-shadow:0 4px 20px rgba(26,58,92,0.3);transition:all .2s;}
+  .print-btn:hover{background:var(--navy-mid);}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-eye">Portfolio Document · Business Development & Channel GTM</div>
+  <h1>MSP/MSSP Security GTM Plan</h1>
+  <div class="cover-sub">A partner-led go-to-market framework built and executed across IBM's North America partner ecosystem — grounded in the market conditions of 2019–2024 and designed to scale.</div>
+  <div class="cover-outcomes">
+    <div class="outcome"><div class="outcome-num">400%+</div><div class="outcome-label">Quota Attainment<br>IBM NA GTM</div></div>
+    <div class="outcome"><div class="outcome-num">25%</div><div class="outcome-label">Partner Attrition<br>Reduction</div></div>
+    <div class="outcome"><div class="outcome-num">40%</div><div class="outcome-label">Platform Engagement<br>Increase</div></div>
+    <div class="outcome"><div class="outcome-num">300+</div><div class="outcome-label">Partners Managed<br>Across Ecosystem</div></div>
+  </div>
+  <div class="cover-meta">
+    <div class="meta-item"><strong>Author</strong>C. Johnson, MBA</div>
+    <div class="meta-item"><strong>Built At</strong>IBM · Denave/GCP</div>
+    <div class="meta-item"><strong>Period</strong>2019–2024</div>
+    <div class="meta-item"><strong>Partner Types</strong>MSSP · MSP · GSI · ISV · OEM · BP</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- PHILOSOPHY -->
+  <div class="philosophy">
+    <div class="philosophy-label">The Operating Philosophy</div>
+    <p>Engage partners around outcomes. Pipeline follows capability — not the other way around.</p>
+    <div class="philosophy-sub">The most durable partner programs are not built on discounts or transaction incentives. They are built on technical capability, compliance confidence, and joint business plans that make both parties accountable. A partner who understands what they are selling, why it matters to their client, and how to close it independently will outperform a partner who relies on vendor overlay every time. This framework was built around that conviction — and the results validated it.</div>
+  </div>
+
+  <!-- SECTION 1: MARKET CONTEXT (brief) -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <div class="section-title">Market Context — 2019–2024</div>
+      <div class="section-context">The environment this plan was built in</div>
+    </div>
+
+    <div class="market-strip">
+      <div class="mstat"><div class="mstat-num">$170B</div><div class="mstat-label">Global managed security market size</div><div class="mstat-year">2022 baseline</div></div>
+      <div class="mstat"><div class="mstat-num">3.5M</div><div class="mstat-label">Global cybersecurity talent gap</div><div class="mstat-year">2021–2024 sustained</div></div>
+      <div class="mstat"><div class="mstat-num">$4.35M</div><div class="mstat-label">Average cost of a data breach</div><div class="mstat-year">IBM Cost of Breach 2022</div></div>
+      <div class="mstat"><div class="mstat-num">60%+</div><div class="mstat-label">Enterprises outsourcing security to MSPs/MSSPs</div><div class="mstat-year">2020–2024 trend</div></div>
+    </div>
+
+    <div class="market-note">The 2019–2024 period saw managed security shift from a niche IT outsourcing category to a board-level priority. The COVID-driven acceleration of remote infrastructure, rising ransomware frequency, and early HIPAA/NIST enforcement created structural, recurring demand — the kind that rewards partners who invest in technical depth over those who simply resell licenses. This GTM framework was designed for exactly that environment.</div>
+  </div>
+
+  <!-- SECTION 2: VALUE PROPOSITION -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">02</div><div class="section-title">Value Proposition — What Partners Actually Sold</div></div>
+
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">The partner value proposition was deliberately shifted from product features to client outcomes. Partners who led with compliance confidence and risk reduction closed faster, discounted less, and retained clients longer than those who led with product specs.</p>
+
+    <div class="vp-grid">
+      <div class="vp-card">
+        <div class="vp-icon">🛡️</div>
+        <div class="vp-title">Compliance Confidence</div>
+        <div class="vp-desc">Partners positioned managed security as the mechanism for meeting HIPAA, NIST CSF, and PCI DSS obligations — not as an IT tool. Compliance-driven buyers had urgent timelines and non-discretionary budgets.</div>
+        <div class="vp-proof">Proof: IBM OpenPages GRC and watsonx.governance positioned specifically around audit readiness and regulatory evidence — not product features</div>
+      </div>
+      <div class="vp-card">
+        <div class="vp-icon">⚡</div>
+        <div class="vp-title">Risk Reduction, Quantified</div>
+        <div class="vp-desc">Partners used IBM Cost of Breach data to build the financial case for managed security in client board conversations. Cost of a breach vs. cost of prevention — a CFO conversation, not an IT conversation.</div>
+        <div class="vp-proof">Proof: Co-developed business case templates used by 40+ partners to move security from IT budget to board-level investment</div>
+      </div>
+      <div class="vp-card">
+        <div class="vp-icon">🤝</div>
+        <div class="vp-title">Trusted Advisor Positioning</div>
+        <div class="vp-desc">Partners who achieved IBM certification and completed vertical-specific enablement positioned themselves as subject matter experts — not resellers. The credential became a business development tool, not just a program requirement.</div>
+        <div class="vp-proof">Proof: Partners with full certification and vertical training averaged 19% higher product adoption than non-certified peers</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: PARTNER SEGMENTATION -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">03</div><div class="section-title">Partner Segmentation — The Foundation</div></div>
+
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">Segmentation preceded everything. A partner's technology capability, skill level, and certification status determined account assignment eligibility, enablement investment priority, and GTM motion. Activating the wrong partner on the wrong account was more damaging than not activating at all.</p>
+
+    <div class="seg-flow">
+      <div class="seg-step">
+        <div class="seg-step-num">Step 1</div>
+        <div class="seg-step-title">Partner Type</div>
+        <p>Classify by GTM motion and primary business. Determines co-sell approach, governance cadence, and enablement depth required.</p>
+      </div>
+      <div class="seg-step">
+        <div class="seg-step-num">Step 2</div>
+        <div class="seg-step-title">Technology Mapping</div>
+        <p>Map each partner to active technology categories. Partners operate across multiple categories at different capability levels — scored separately per category.</p>
+      </div>
+      <div class="seg-step">
+        <div class="seg-step-num">Step 3</div>
+        <div class="seg-step-title">Skill & Cert Assessment</div>
+        <p>Technical skill level (High/Medium/Low) and certification status assessed at the org level per technology. Updated each cycle. Gates account assignment.</p>
+      </div>
+      <div class="seg-step">
+        <div class="seg-step-num">Step 4</div>
+        <div class="seg-step-title">Profile → GTM Motion</div>
+        <p>Segmentation profile determines which GTM motion applies, which accounts they are eligible for, and what the health scoring weights are for that partner.</p>
+      </div>
+    </div>
+
+    <div class="matrix-wrap">
+      <div class="matrix-label">
+        <span>Sample Partner Capability Matrix — Technology × Skill × Certification</span>
+        <span style="font-size:9px;">5 of 300+ partners shown · Full matrix maintained in working model</span>
+      </div>
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="min-width:130px">Partner</th>
+            <th colspan="3" class="cat" style="text-align:center;border-right:2px solid rgba(255,255,255,0.15)">Data & AI</th>
+            <th colspan="3" class="cat" style="text-align:center;border-right:2px solid rgba(255,255,255,0.15)">Security & GRC</th>
+            <th colspan="2" class="cat" style="text-align:center">Cloud / Observability</th>
+          </tr>
+          <tr>
+            <th>Skill</th><th>Cert</th><th style="border-right:2px solid rgba(255,255,255,0.15)">Eligible</th>
+            <th>Skill</th><th>Cert</th><th style="border-right:2px solid rgba(255,255,255,0.15)">Eligible</th>
+            <th>Skill</th><th>Cert</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="p-name">Partner A</div><div class="p-type">MSSP</div></td>
+            <td class="cell"><span class="badge h">High</span></td><td class="cell"><span class="badge cert">✓</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge cert">Yes</span></td>
+            <td class="cell"><span class="badge h">High</span></td><td class="cell"><span class="badge cert">✓</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge cert">Yes</span></td>
+            <td class="cell"><span class="badge m">Med</span></td><td class="cell"><span class="badge prog">In Prog</span></td>
+          </tr>
+          <tr>
+            <td><div class="p-name">Partner B</div><div class="p-type">MSP</div></td>
+            <td class="cell"><span class="badge m">Med</span></td><td class="cell"><span class="badge prog">In Prog</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge nc">No</span></td>
+            <td class="cell"><span class="badge l">Low</span></td><td class="cell"><span class="badge nc">✗</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge nc">No</span></td>
+            <td class="cell"><span class="badge h">High</span></td><td class="cell"><span class="badge cert">✓</span></td>
+          </tr>
+          <tr>
+            <td><div class="p-name">Partner C</div><div class="p-type">ISV</div></td>
+            <td class="cell"><span class="badge h">High</span></td><td class="cell"><span class="badge cert">✓</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge cert">Yes</span></td>
+            <td class="cell"><span class="badge m">Med</span></td><td class="cell"><span class="badge prog">In Prog</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge nc">No</span></td>
+            <td class="cell"><span class="badge l">Low</span></td><td class="cell"><span class="badge nc">✗</span></td>
+          </tr>
+          <tr>
+            <td><div class="p-name">Partner D</div><div class="p-type">BP</div></td>
+            <td class="cell"><span class="badge h">High</span></td><td class="cell"><span class="badge cert">✓</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge cert">Yes</span></td>
+            <td class="cell"><span class="badge h">High</span></td><td class="cell"><span class="badge cert">✓</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge cert">Yes</span></td>
+            <td class="cell"><span class="badge m">Med</span></td><td class="cell"><span class="badge cert">✓</span></td>
+          </tr>
+          <tr>
+            <td><div class="p-name">Partner E</div><div class="p-type">OEM</div></td>
+            <td class="cell"><span class="badge h">High</span></td><td class="cell"><span class="badge cert">✓</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge cert">Yes</span></td>
+            <td class="cell"><span class="badge l">Low</span></td><td class="cell"><span class="badge nc">✗</span></td>
+            <td class="cell" style="border-right:2px solid var(--border)"><span class="badge nc">No</span></td>
+            <td class="cell"><span class="badge h">High</span></td><td class="cell"><span class="badge cert">✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="matrix-note">★ Illustrative sample. Full matrix (300+ partners × 50+ products across Data & AI, Security & GRC, Cloud/Observability) maintained in working model. Product catalog includes watsonx.ai, watsonx.governance, watsonx.data, OpenPages GRC, SPSS Analytics, Instana APM, IBM Log Analysis, Cloud Pak for Data, DataStage, Cognos, and 40+ additional IBM products tracked per partner per certification cycle. "Eligible" = certified and skill level sufficient for account assignment in that technology category.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: GTM STRATEGY -->
+  <div class="section page-break">
+    <div class="section-header"><div class="section-num">04</div><div class="section-title">GTM Strategy — Four Pillars</div></div>
+
+    <div class="pillar-cards">
+      <div class="pillar-card">
+        <div class="pillar-header"><span class="pillar-num">01</span><span class="pillar-title">Grow the Base — ICP-Led Partner Activation</span></div>
+        <div class="pillar-body">
+          <p>Partner acquisition followed an ICP model — not spray-and-pray. Segment first, activate second. The wrong partner on the right account creates more damage than no partner at all.</p>
+          <ul>
+            <li><strong>ICP definition:</strong> Tiered by vertical focus, technical maturity, existing compliance capability, and managed security service depth</li>
+            <li><strong>Account mapping:</strong> Bi-directional mapping of partner accounts vs. IBM install base — overlap identified before first QBR, not after</li>
+            <li><strong>Tiered onboarding:</strong> MSSPs with existing SOC capability enter at Tier 1. MSPs building toward security enter at Tier 2 with higher enablement investment and longer revenue timelines</li>
+            <li><strong>Health scoring from day one:</strong> Baseline established at onboarding, creating early intervention triggers before pipeline was impacted</li>
+          </ul>
+        </div>
+        <div class="pillar-proof">
+          <div class="pillar-proof-label">What this produced</div>
+          <p>300+ active partners managed simultaneously across GSIs, MSSPs, ISVs, OEMs, and BPs. Partner segmentation reduced wasted enablement investment by focusing resources on partners with the highest ICP match.</p>
+        </div>
+        <div class="pillar-kpis">
+          <div class="pillar-kpis-label">KPIs Tracked</div>
+          <div class="kpi-chips"><span class="kpi-chip">Time to first opportunity</span><span class="kpi-chip">ICP match rate</span><span class="kpi-chip">Tier 1 vs Tier 2 ratio</span><span class="kpi-chip">Account map coverage %</span></div>
+        </div>
+      </div>
+
+      <div class="pillar-card">
+        <div class="pillar-header"><span class="pillar-num">02</span><span class="pillar-title">Equip with Outcomes — Enablement Over Discounting</span></div>
+        <div class="pillar-body">
+          <p>Discounting was a signal of failed enablement — not a closing tool. Partners who could articulate the compliance and risk reduction value of managed security discounted 30–40% less than those who relied on price to close.</p>
+          <ul>
+            <li><strong>Outcome-led demo kits:</strong> Built around client compliance problems — HIPAA readiness, NIST CSF gap analysis, audit evidence — not product feature sets</li>
+            <li><strong>Compliance maps:</strong> Vertical-specific guides mapping IBM managed security capabilities to regulatory requirements. Partners used in procurement conversations where compliance was the buying criteria</li>
+            <li><strong>Co-branded materials:</strong> White-labeled client-facing assets deployed under partner brand — elevated partner credibility and reduced vendor dependency</li>
+            <li><strong>Technical certifications:</strong> IBM credentials partners actively marketed to clients as proof of capability — not just program compliance checkboxes</li>
+          </ul>
+        </div>
+        <div class="pillar-proof">
+          <div class="pillar-proof-label">What this produced</div>
+          <p>19% product adoption increase through targeted enablement programs. Partners with full vertical training and certification closed more complex deals with less vendor overlay required.</p>
+        </div>
+        <div class="pillar-kpis">
+          <div class="pillar-kpis-label">KPIs Tracked</div>
+          <div class="kpi-chips"><span class="kpi-chip">Training completion rate</span><span class="kpi-chip">Discount frequency</span><span class="kpi-chip">Partner self-sufficiency</span><span class="kpi-chip">Certification adoption</span></div>
+        </div>
+      </div>
+
+      <div class="pillar-card">
+        <div class="pillar-header"><span class="pillar-num">03</span><span class="pillar-title">Joint GTM Motion — Pipeline, Mapping & Incentives</span></div>
+        <div class="pillar-body">
+          <p>A joint GTM motion means both parties are accountable. Pipeline creation was shared, account mapping was mutual, and joint business plans set targets both parties reviewed quarterly — not vendor-pushing into partner accounts.</p>
+          <ul>
+            <li><strong>Joint pipeline creation:</strong> Co-developed pipeline targets by account, vertical, and compliance trigger. Both parties had skin in the game</li>
+            <li><strong>Account mapping in Salesforce:</strong> Bi-directional mapping of vendor install base and partner customer base. Highest-conversion co-sell motion — introduced in conversations, not cold</li>
+            <li><strong>Incentive alignment:</strong> Rewarded recurring managed service revenue and new logo acquisition — not just one-time resale volume that inflates quarterly numbers without building ecosystem health</li>
+            <li><strong>QBR structure:</strong> Quarterly reviews built around joint pipeline progress, account plan advancement, and enablement gaps — not product training sessions</li>
+          </ul>
+        </div>
+        <div class="pillar-proof">
+          <div class="pillar-proof-label">What this produced</div>
+          <p>16 joint business plans executed with priority partners — 16% territory expansion. 63% increase in partner integration efficiency within first fiscal quarter through disciplined JBP execution.</p>
+        </div>
+        <div class="pillar-kpis">
+          <div class="pillar-kpis-label">KPIs Tracked</div>
+          <div class="kpi-chips"><span class="kpi-chip">Partner-sourced pipeline ($)</span><span class="kpi-chip">Co-sell win rate</span><span class="kpi-chip">JBP completion rate</span><span class="kpi-chip">Recurring vs one-time revenue</span></div>
+        </div>
+      </div>
+
+      <div class="pillar-card">
+        <div class="pillar-header"><span class="pillar-num">04</span><span class="pillar-title">Marketing & Sales Strategy — Co-Marketing Execution</span></div>
+        <div class="pillar-body">
+          <p>Co-marketing programs were pipeline creation infrastructure — not activities. Every MDF dollar had a pipeline attribution target and ROI tracking built in before funds were allocated.</p>
+          <ul>
+            <li><strong>Webinar series:</strong> Compliance-focused webinars positioned as education, hosted by partners under their brand. IBM provided content. Partners provided distribution to their client base and owned the lead follow-up</li>
+            <li><strong>Field events:</strong> Regional partner-hosted briefings targeting CISO and IT Director audiences. High-touch, high-conversion for mid-market and enterprise deals</li>
+            <li><strong>Email campaigns:</strong> Co-branded sequences built around compliance triggers — HIPAA audit season, PCI DSS renewal cycles — not generic product announcements</li>
+            <li><strong>MDF governance:</strong> $500K+ annual MDF managed with full audit trail. Allocation tied to partner tier, co-marketing commitment, and trailing ROI. Partners who demonstrated 5:1 pipeline-to-MDF ratio received priority reinvestment</li>
+          </ul>
+        </div>
+        <div class="pillar-proof">
+          <div class="pillar-proof-label">What this produced</div>
+          <p>$500K+ MDF managed annually with hands-on stewardship. 40% engagement increase across priority partners through disciplined co-marketing execution and campaign cadence management.</p>
+        </div>
+        <div class="pillar-kpis">
+          <div class="pillar-kpis-label">KPIs Tracked</div>
+          <div class="kpi-chips"><span class="kpi-chip">MDF ROI (5:1 target)</span><span class="kpi-chip">Webinar pipeline attribution</span><span class="kpi-chip">Field event conversion</span><span class="kpi-chip">Email campaign open/response rates</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: ENABLEMENT ARCHITECTURE -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">05</div><div class="section-title">Enablement Architecture — The Shift That Changed Close Rates</div></div>
+
+    <div class="enable-vs">
+      <div class="enable-vs-title">What Changed — And Why It Mattered to Close Rates</div>
+      <div class="enable-vs-row"><div class="enable-vs-old">Product feature training sessions</div><div class="enable-vs-arrow">→</div><div class="enable-vs-new">Outcome-led positioning workshops anchored to compliance requirements</div></div>
+      <div class="enable-vs-row"><div class="enable-vs-old">Discount escalation as the primary close tool</div><div class="enable-vs-arrow">→</div><div class="enable-vs-new">Business case templates and ROI calculators that close on value</div></div>
+      <div class="enable-vs-row"><div class="enable-vs-old">Generic vendor pitch decks</div><div class="enable-vs-arrow">→</div><div class="enable-vs-new">Co-branded partner materials with client's vertical and compliance context</div></div>
+      <div class="enable-vs-row"><div class="enable-vs-old">Annual enablement event, then nothing</div><div class="enable-vs-arrow">→</div><div class="enable-vs-new">Continuous cadence — monthly workshops, on-demand technical labs, QBR prep</div></div>
+      <div class="enable-vs-row"><div class="enable-vs-old">Certification as a program checkbox</div><div class="enable-vs-arrow">→</div><div class="enable-vs-new">Certification as a client-facing differentiator partners actively marketed</div></div>
+    </div>
+
+    <div class="enable-grid">
+      <div class="enable-card">
+        <div class="enable-icon">🎯</div>
+        <div class="enable-title">Outcome-Led Demo Kits</div>
+        <div class="enable-body">Built around client compliance problems. HIPAA readiness review. NIST CSF gap analysis. PCI DSS evidence framework. Partners ran these independently in client conversations — no vendor overlay required for standard enterprise deals.</div>
+      </div>
+      <div class="enable-card">
+        <div class="enable-icon">📋</div>
+        <div class="enable-title">Vertical Compliance Maps</div>
+        <div class="enable-body">Guides mapping IBM managed security capabilities to specific regulatory requirements by vertical. Healthcare/HIPAA. Financial/SOX+PCI. Energy/NERC CIP. Used directly in procurement conversations where compliance was the buying criteria.</div>
+      </div>
+      <div class="enable-card">
+        <div class="enable-icon">🛠️</div>
+        <div class="enable-title">Co-Branded Client Tools</div>
+        <div class="enable-body">White-labeled assets partners deployed under their own brand: security posture assessments, incident response playbooks, board reporting dashboards. Elevated partner credibility and reduced vendor dependency in client relationships.</div>
+      </div>
+      <div class="enable-card">
+        <div class="enable-icon">🏆</div>
+        <div class="enable-title">IBM Technical Certifications</div>
+        <div class="enable-body">watsonx.ai, watsonx.governance, OpenPages GRC, and Data & AI portfolio certifications that partners actively marketed to clients as proof of capability. Certified partners averaged 19% higher product adoption than non-certified peers.</div>
+      </div>
+      <div class="enable-card">
+        <div class="enable-icon">💼</div>
+        <div class="enable-title">Battle Cards & Competitive Intel</div>
+        <div class="enable-body">Partner-facing competitive positioning against Splunk Observability, Splunk Cloud, and market alternatives. Built from Gartner Magic Quadrant analysis, Thomson Reuters competitive benchmarking, and Forrester Wave data — translated into usable partner sales tools.</div>
+      </div>
+      <div class="enable-card">
+        <div class="enable-icon">📊</div>
+        <div class="enable-title">Business Case & ROI Tools</div>
+        <div class="enable-body">Templates helping partners quantify the financial case for managed security in client board conversations. IBM Cost of Breach data translated into CFO-ready language: cost of a breach vs. cost of prevention, compliance fine avoidance, operational efficiency gains.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: COMPLIANCE ENTRY POINTS -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">06</div><div class="section-title">Compliance as GTM Entry Points — How Regulations Opened Doors</div></div>
+
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">Compliance mandates were not headwinds — they were GTM forcing functions used to open conversations that pure product selling could not. Each regulation created an urgent, non-discretionary buying trigger that compliance-literate partners could act on.</p>
+
+    <div class="compliance-grid">
+      <div class="compliance-card">
+        <div class="comp-header"><span class="comp-badge b-hipaa">HIPAA / HITECH</span><span class="comp-title">Healthcare — Highest Cost Vertical</span></div>
+        <div class="comp-body">
+          <p>Healthcare breach costs averaged 3× the cross-industry average during this period. HIPAA enforcement accelerated after major health system breaches. Partners serving healthcare had a compliance-driven buying trigger in every annual audit cycle.</p>
+          <ul>
+            <li>IBM OpenPages GRC positioned as audit evidence infrastructure</li>
+            <li>Managed security framed as HIPAA Business Associate Agreement compliance</li>
+            <li>Ransomware targeting healthcare created urgent, reactive buying</li>
+          </ul>
+          <div class="comp-entry">↑ Entry Point: Annual HIPAA audit season created predictable, recurring pipeline conversations for compliant partners</div>
+        </div>
+      </div>
+      <div class="compliance-card">
+        <div class="comp-header"><span class="comp-badge b-sox">SOX / PCI DSS</span><span class="comp-title">Financial Services — Mandatory Controls</span></div>
+        <div class="comp-body">
+          <p>Financial services clients faced overlapping SOX, PCI DSS, and SEC cybersecurity disclosure obligations. Partners who could map managed security to specific control frameworks had a differentiated conversation that product-focused competitors could not match.</p>
+          <ul>
+            <li>watsonx.governance positioned as AI governance evidence for SEC disclosure</li>
+            <li>IBM Log Analysis and Instana APM positioned as SOC 2 infrastructure</li>
+            <li>PCI DSS renewal cycles created predictable pipeline trigger dates</li>
+          </ul>
+          <div class="comp-entry">↑ Entry Point: Board-level cybersecurity obligations created executive-level access that IT-only conversations never reached</div>
+        </div>
+      </div>
+      <div class="compliance-card">
+        <div class="comp-header"><span class="comp-badge b-nist">NIST CSF</span><span class="comp-title">Cross-Vertical — Federal & Enterprise</span></div>
+        <div class="comp-body">
+          <p>NIST Cybersecurity Framework was the most widely referenced framework across IBM's regulated industry partners — financial services, healthcare, energy, and technology. Partners fluent in NIST could navigate both federal-adjacent and commercial enterprise conversations.</p>
+          <ul>
+            <li>Identify, Protect, Detect, Respond, Recover mapped to IBM portfolio capabilities</li>
+            <li>Partners used NIST gap analysis as the opening assessment tool</li>
+            <li>NIST alignment positioned IBM managed security as framework-native, not point-product</li>
+          </ul>
+          <div class="comp-entry">↑ Entry Point: NIST gap assessments delivered by partners as a free engagement tool — created 6–8 week evaluation cycles that converted at high rates</div>
+        </div>
+      </div>
+      <div class="compliance-card">
+        <div class="comp-header"><span class="comp-badge b-gdpr">GDPR / State Privacy</span><span class="comp-title">Data Governance — Cross-Border</span></div>
+        <div class="comp-body">
+          <p>GDPR enforcement fines and US state privacy law proliferation (CCPA, CPRA) created data governance urgency for any enterprise with European customers or multi-state operations. IBM's data governance portfolio had a natural compliance alignment.</p>
+          <ul>
+            <li>watsonx.data and watsonx.governance positioned as GDPR data lineage infrastructure</li>
+            <li>IBM OpenPages GRC for regulatory evidence and audit trail management</li>
+            <li>CCPA/CPRA created parallel compliance conversations for California-exposed partners</li>
+          </ul>
+          <div class="comp-entry">↑ Entry Point: GDPR fines on major enterprises created fear-based urgency across industries — partners used case studies to drive immediate risk assessment conversations</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: ECOSYSTEM -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">07</div><div class="section-title">Ecosystem Thinking — Beyond the Channel</div></div>
+
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">The channel motion addressed distribution. The ecosystem motion addressed the full buying environment — the cloud providers, technology alliances, and intelligence networks that determined whether partners succeeded at scale with their clients.</p>
+
+    <div class="eco-grid">
+      <div class="eco-card">
+        <div class="eco-icon">☁️</div>
+        <div class="eco-title">Hyperscaler Co-Sell</div>
+        <div class="eco-desc">Google Cloud, AWS, and Microsoft Azure co-sell motions integrated into the IBM partner program. Joint opportunities with hyperscaler partners carried higher close rates because both vendors had install base relationships with the same accounts.</div>
+        <div class="eco-examples">Google Cloud co-sell (GCP JBP) · AWS marketplace · Azure co-sell · Joint solution validation · Multi-cloud managed security positioning</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-icon">🔗</div>
+        <div class="eco-title">Technology Alliance Partners</div>
+        <div class="eco-desc">IBM's ecosystem of ISV and technology alliance partners created integrated solutions that extended managed security capability beyond what IBM's platform alone delivered. SIEM, endpoint, and identity integrations were co-marketed as complete solutions.</div>
+        <div class="eco-examples">SIEM provider integrations · Endpoint security alliances · Identity platform partnerships · Instana APM ecosystem · Log Analysis integrations</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-icon">🏢</div>
+        <div class="eco-title">Industry Association Presence</div>
+        <div class="eco-desc">IBM partner program participation in CompTIA, (ISC)², and ISACA created brand trust and partner recruitment channels that organic outreach could not replicate. Association relationships also surfaced compliance intelligence that informed GTM messaging.</div>
+        <div class="eco-examples">CompTIA channel programs · (ISC)² certified partner recognition · ISACA chapter presence · RSA Conference · IBM Think ecosystem events</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 8: RESULTS -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">08</div><div class="section-title">Results — What the Framework Produced</div></div>
+
+    <div class="results-grid">
+      <div class="result-card"><div class="result-num">400%+</div><div class="result-label">Quota Attainment</div><div class="result-context">IBM NA GTM · Financial services, healthcare, energy, manufacturing</div></div>
+      <div class="result-card"><div class="result-num">25%</div><div class="result-label">Partner Attrition Reduction</div><div class="result-context">Applied via health scoring and early intervention protocol</div></div>
+      <div class="result-card"><div class="result-num">40%</div><div class="result-label">Platform Engagement Increase</div><div class="result-context">Priority partners · Denave/GCP program activation</div></div>
+    </div>
+    <div class="results-grid" style="margin-top:14px">
+      <div class="result-card"><div class="result-num">16%</div><div class="result-label">Territory Expansion</div><div class="result-context">Through disciplined JBP execution and account mapping</div></div>
+      <div class="result-card"><div class="result-num">63%</div><div class="result-label">Partner Integration Efficiency Increase</div><div class="result-context">First fiscal quarter following JBP implementation</div></div>
+      <div class="result-card"><div class="result-num">19%</div><div class="result-label">Product Adoption Increase</div><div class="result-context">Certified partners vs. non-certified peers — same product, different enablement</div></div>
+    </div>
+
+    <div style="background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:10px;padding:18px 22px;margin-top:14px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9.5px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px;">IBM Recognition</div>
+      <p style="font-size:14px;color:var(--ink);line-height:1.7;">IBM Golden Circle Award (2023) · IBM 100% Club (2022) · STAR Leadership Development Program Selectee — recognition tied directly to partner ecosystem performance and quota attainment outcomes produced by this GTM framework.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 9: ROADMAP -->
+  <div class="section">
+    <div class="section-header"><div class="section-num">09</div><div class="section-title">How to Operationalize This Framework</div></div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">The sequence matters as much as the strategy. Attempting co-marketing before segmentation and enablement are complete is a waste of MDF. This is the order of operations that produced the outcomes above.</p>
+    <div class="roadmap">
+      <div class="rphase">
+        <div class="rphase-header p1"><div class="rphase-label">Phase 1</div><div class="rphase-title">Segment & Baseline</div><div class="rphase-time">Months 1–3</div></div>
+        <div class="rphase-body">
+          <ul>
+            <li>Define ICP — MSSP vs MSP by vertical and compliance maturity</li>
+            <li>Build partner segmentation matrix in Salesforce or Excel</li>
+            <li>Assess technical skill and certification status per technology category</li>
+            <li>Establish health scoring baseline for all active partners</li>
+            <li>Audit existing enablement — identify outcome gaps vs. feature focus</li>
+            <li>Internal alignment: Product, Marketing, Legal, Ops on joint GTM framework</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rphase">
+        <div class="rphase-header p2"><div class="rphase-label">Phase 2</div><div class="rphase-title">Enable & Activate</div><div class="rphase-time">Months 4–6</div></div>
+        <div class="rphase-body">
+          <ul>
+            <li>Deploy outcome-led demo kits and compliance maps to Tier 1 partners</li>
+            <li>Launch technical certification program — active GTM tool, not checkbox</li>
+            <li>First QBR cycle — establish joint pipeline targets and account maps</li>
+            <li>Webinar series launch — compliance-anchored, partner-hosted</li>
+            <li>MDF program activation — governance, allocation, ROI tracking live</li>
+            <li>Hyperscaler co-sell motion initiated with priority partners</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rphase">
+        <div class="rphase-header p3"><div class="rphase-label">Phase 3</div><div class="rphase-title">Scale & Iterate</div><div class="rphase-time">Months 7–12</div></div>
+        <div class="rphase-body">
+          <ul>
+            <li>Expand to Tier 2 MSPs — localized enablement for security capability build</li>
+            <li>Field event program launch — regional CISO/IT Director briefings</li>
+            <li>Partner advisory board — Tier 1 input into product and enablement roadmap</li>
+            <li>Iterate offer templates from 6-month activation data</li>
+            <li>Health scoring review — offboard chronic underperformers, protect ecosystem ROI</li>
+            <li>Annual GTM review — update ICP, incentive models, and compliance map coverage</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<button class="print-btn no-print" onclick="window.print()">🖨 Print / Save PDF</button>
+</body>
+</html>
